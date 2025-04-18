@@ -229,21 +229,50 @@ performance:
     plot_win_loss_distribution: true
     save_to_file: true
 risk:
+  # Financial settings
   commission: 0.002
   currency: GBP
-  enable_fractional_shares: true
-  initial_balance: 50.0
-  max_daily_drawdown: 5.0
-  max_daily_loss: 3.0
-  max_open_positions: 5
-  max_risk_per_trade: 0.01
-  risk_per_trade: 0.01
-  risk_reward_ratio: 1.5
   slippage: 0.001
+
+  # Account settings
+  initial_balance: 50.0
+  enable_fractional_shares: true
+
+  # Position sizing
+  max_position_pct: 0.1  # Maximum 10% of balance per trade
+  risk_per_trade: 0.01   # Risk 1% of balance per trade
+
+  # Risk limits
+  max_total_risk_pct: 0.5  # Maximum 50% of balance at risk
+  max_drawdown_pct: 0.1    # Maximum 10% drawdown
+  max_daily_drawdown: 5.0  # Maximum 5% daily drawdown
+  max_daily_loss: 3.0      # Maximum 3% daily loss
+
+  # Trade management
+  max_open_positions: 5    # Maximum 5 concurrent trades
+  risk_reward_ratio: 1.5   # Minimum 1.5:1 risk-reward ratio
+
+  # Stop loss settings
   stop_loss:
     atr_multiplier: 1.5
     method: atr
     percent: 0.3
+
+    # Trailing stop loss
+    trailing:
+      enabled: true
+      activation_pct: 0.01  # Activate at 1% profit
+      distance_pct: 0.01    # Trail by 1%
+
+  # Take profit settings
+  take_profit:
+    default_pct: 0.03  # Default 3% take profit
+
+    # Multiple take profit levels
+    levels:
+      - { pct: 0.02, size_pct: 0.33 }  # 33% of position at 2% profit
+      - { pct: 0.03, size_pct: 0.33 }  # 33% of position at 3% profit
+      - { pct: 0.05, size_pct: 0.34 }  # 34% of position at 5% profit
 simulation:
   commission: 0.002
   enable_fractional_shares: true

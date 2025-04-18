@@ -34,6 +34,7 @@ from src.simulation.paper_trader import PaperTrader
 from src.strategy.intraday_strategy import IntradayStrategy
 from src.data.provider import YahooFinanceProvider
 from src.ui.trading_ui import TradingUI
+from src.risk.risk_manager import RiskManager
 
 
 # Global variables
@@ -48,6 +49,7 @@ losing_trades = 0
 balance = 50.0
 total_profit_loss = 0.0  # Track total profit/loss from all trades
 closed_trades = []  # Keep track of all closed trades
+risk_manager = None  # Risk manager instance
 
 
 def load_config(config_path: str) -> dict:
@@ -157,10 +159,38 @@ def on_trade_opened(trade_data):
     Args:
         trade_data: Trade data dictionary
     """
-    global ui, active_trades, total_trades, balance, total_profit_loss
+    global ui, active_trades, total_trades, balance, total_profit_loss, risk_manager
 
     # Generate a unique ID for the trade
     trade_id = str(uuid.uuid4())
+
+    # Calculate position size and cost
+    symbol = trade_data.get("symbol", "")
+    direction = trade_data.get("direction", "")
+    entry_price = trade_data.get("entry_price", 0.0)
+
+    # Check with risk manager if we can open this trade
+    can_trade = True
+    position_size = trade_data.get("size", 1.0)
+    cost = position_size * entry_price
+
+    if risk_manager:
+        # Check if we can open this trade based on risk parameters
+        can_trade, position_size, cost = risk_manager.can_open_trade(symbol, entry_price, direction, balance)
+
+        if not can_trade:
+            logger.warning(f"Risk manager prevented opening trade for {symbol} at ${entry_price:.2f}")
+            if ui:
+                ui.add_message({
+                    "type": "log",
+                    "level": "WARNING",
+                    "message": f"Risk manager prevented opening trade for {symbol} at ${entry_price:.2f}"
+                })
+            return
+
+        # Update trade data with new position size and cost
+        trade_data["size"] = position_size
+        trade_data["cost"] = cost
 
     # Add trade to active trades
     active_trades[trade_id] = trade_data
@@ -168,19 +198,18 @@ def on_trade_opened(trade_data):
     # Update total trades
     total_trades += 1
 
-    # Calculate cost and update balance
-    position_size = trade_data.get("size", 1.0)
-    entry_price = trade_data.get("entry_price", 0.0)
-    cost = position_size * entry_price
-
     # Update balance
     balance -= cost
+
+    # Register trade with risk manager
+    if risk_manager:
+        risk_manager.register_trade(trade_id, trade_data)
 
     # Format trade data for UI
     ui_trade = {
         "id": trade_id,
-        "symbol": trade_data.get("symbol", ""),
-        "direction": trade_data.get("direction", ""),
+        "symbol": symbol,
+        "direction": direction,
         "entry_time": trade_data.get("entry_time", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
         "entry_price": entry_price,
         "current_price": entry_price,
@@ -196,6 +225,11 @@ def on_trade_opened(trade_data):
             "trade": ui_trade
         })
 
+        # Get risk metrics
+        risk_metrics = {}
+        if risk_manager:
+            risk_metrics = risk_manager.get_risk_metrics()
+
         # Update statistics
         ui.add_message({
             "type": "statistics",
@@ -204,12 +238,14 @@ def on_trade_opened(trade_data):
                 "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
                 "total_profit_loss": total_profit_loss,
                 "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
-                "balance": balance
+                "balance": balance,
+                "exposure_percent": risk_metrics.get("exposure_pct", 0.0) * 100 if risk_metrics else 0.0,
+                "max_position_pct": risk_manager.max_position_pct * 100 if risk_manager else 10.0
             }
         })
 
     # Log trade
-    logger.info(f"Trade opened: {ui_trade['direction']} {ui_trade['symbol']} at ${ui_trade['entry_price']:.2f}, Size: {position_size}, Cost: ${cost:.2f}, Balance: ${balance:.2f}")
+    logger.info(f"Trade opened: {direction} {symbol} at ${entry_price:.2f}, Size: {position_size}, Cost: ${cost:.2f}, Balance: ${balance:.2f}")
 
 
 def on_trade_closed(trade_data):
@@ -219,7 +255,7 @@ def on_trade_closed(trade_data):
     Args:
         trade_data: Trade data dictionary
     """
-    global ui, active_trades, winning_trades, losing_trades, balance, total_profit_loss, closed_trades
+    global ui, active_trades, winning_trades, losing_trades, balance, total_profit_loss, closed_trades, risk_manager
 
     # Find the trade in active trades
     trade_id = None
@@ -238,8 +274,13 @@ def on_trade_closed(trade_data):
     # Calculate profit/loss
     profit_loss = trade_data.get("profit_loss", 0.0)
 
+    # Calculate return amount (cost + profit/loss)
+    position_size = trade_data.get("size", trade.get("size", 1.0))
+    exit_price = trade_data.get("exit_price", 0.0)
+    return_amount = exit_price * position_size
+
     # Update balance
-    balance += trade_data.get("exit_price", 0.0) * trade_data.get("size", 1.0)
+    balance += return_amount
 
     # Update win/loss count
     if profit_loss > 0:
@@ -250,6 +291,10 @@ def on_trade_closed(trade_data):
     # Update total profit/loss
     total_profit_loss += profit_loss
 
+    # Unregister trade with risk manager
+    if risk_manager:
+        risk_manager.unregister_trade(trade_id, profit_loss)
+
     # Format trade data for UI
     ui_trade = {
         "id": trade_id,
@@ -258,9 +303,9 @@ def on_trade_closed(trade_data):
         "entry_time": trade.get("entry_time", ""),
         "exit_time": trade_data.get("exit_time", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
         "entry_price": trade.get("entry_price", 0.0),
-        "exit_price": trade_data.get("exit_price", 0.0),
+        "exit_price": exit_price,
         "profit_loss": profit_loss,
-        "size": trade_data.get("size", 1.0)
+        "size": position_size
     }
 
     # Add to closed trades list
@@ -273,6 +318,11 @@ def on_trade_closed(trade_data):
             "trade": ui_trade
         })
 
+        # Get risk metrics
+        risk_metrics = {}
+        if risk_manager:
+            risk_metrics = risk_manager.get_risk_metrics()
+
         # Update statistics
         ui.add_message({
             "type": "statistics",
@@ -281,7 +331,9 @@ def on_trade_closed(trade_data):
                 "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
                 "total_profit_loss": total_profit_loss,  # Use the cumulative profit/loss
                 "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
-                "balance": balance
+                "balance": balance,
+                "exposure_percent": risk_metrics.get("exposure_pct", 0.0) * 100 if risk_metrics else 0.0,
+                "drawdown_percent": risk_metrics.get("drawdown", 0.0) * 100 if risk_metrics else 0.0
             }
         })
 
@@ -331,7 +383,7 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
         symbols: List of symbols to trade
         timeframe: Timeframe to use
     """
-    global paper_trader, ui
+    global paper_trader, ui, risk_manager, balance
 
     logger.info(f"Starting day trading algorithm with {len(symbols)} symbols")
 
@@ -346,6 +398,24 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
             "type": "log",
             "level": "INFO",
             "message": f"Starting day trading algorithm with {len(symbols)} symbols"
+        })
+
+    # Initialize risk manager
+    risk_config = config.get("risk", {})
+    if not "initial_balance" in risk_config:
+        risk_config["initial_balance"] = balance
+    if not "max_position_pct" in risk_config:
+        risk_config["max_position_pct"] = 0.1  # Limit to 10% of balance per trade
+
+    config["risk"] = risk_config
+    risk_manager = RiskManager(config)
+
+    logger.info(f"Risk Manager initialized with max position: {risk_manager.max_position_pct*100}% of balance")
+    if ui:
+        ui.add_message({
+            "type": "log",
+            "level": "INFO",
+            "message": f"Risk Manager initialized with max position: {risk_manager.max_position_pct*100}% of balance"
         })
 
     # Initialize data provider
@@ -369,7 +439,8 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
             timeframe=timeframe,
             strategy=strategy,
             data_provider=data_provider,
-            duration_hours=6.5  # Standard market hours duration
+            duration_hours=6.5,  # Standard market hours duration
+            risk_manager=risk_manager  # Pass risk manager to paper trader
         )
     except Exception as e:
         logger.error(f"Error in paper trading: {e}")

@@ -99,18 +99,27 @@ class TradingUI:
         ttk.Label(stats_grid, text="Win Rate:").grid(row=0, column=2, sticky=tk.W, padx=5, pady=2)
         ttk.Label(stats_grid, text="Profit/Loss:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=2)
         ttk.Label(stats_grid, text="Balance:").grid(row=1, column=2, sticky=tk.W, padx=5, pady=2)
+        ttk.Label(stats_grid, text="Exposure:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=2)
+        ttk.Label(stats_grid, text="Max Position:").grid(row=2, column=2, sticky=tk.W, padx=5, pady=2)
+        ttk.Label(stats_grid, text="Drawdown:").grid(row=3, column=0, sticky=tk.W, padx=5, pady=2)
 
         # Create statistics variables
         self.total_trades_var = tk.StringVar(value="0")
         self.win_rate_var = tk.StringVar(value="0.0%")
         self.profit_loss_var = tk.StringVar(value="$0.00")
         self.balance_var = tk.StringVar(value="$50.00")
+        self.exposure_var = tk.StringVar(value="0.0%")
+        self.max_position_var = tk.StringVar(value="10.0%")
+        self.drawdown_var = tk.StringVar(value="0.0%")
 
         # Create statistics value labels
         ttk.Label(stats_grid, textvariable=self.total_trades_var, font=("Arial", 10, "bold")).grid(row=0, column=1, sticky=tk.W, padx=5, pady=2)
         ttk.Label(stats_grid, textvariable=self.win_rate_var, font=("Arial", 10, "bold")).grid(row=0, column=3, sticky=tk.W, padx=5, pady=2)
         ttk.Label(stats_grid, textvariable=self.profit_loss_var, font=("Arial", 10, "bold")).grid(row=1, column=1, sticky=tk.W, padx=5, pady=2)
         ttk.Label(stats_grid, textvariable=self.balance_var, font=("Arial", 10, "bold")).grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
+        ttk.Label(stats_grid, textvariable=self.exposure_var, font=("Arial", 10, "bold")).grid(row=2, column=1, sticky=tk.W, padx=5, pady=2)
+        ttk.Label(stats_grid, textvariable=self.max_position_var, font=("Arial", 10, "bold")).grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
+        ttk.Label(stats_grid, textvariable=self.drawdown_var, font=("Arial", 10, "bold")).grid(row=3, column=1, sticky=tk.W, padx=5, pady=2)
 
         # Create notebook for trades and logs
         notebook = ttk.Notebook(main_frame)
@@ -409,6 +418,28 @@ class TradingUI:
 
         # Update balance
         self.balance_var.set(f"${stats.get('balance', 50.0):.2f}")
+
+        # Update risk metrics
+        self.exposure_var.set(f"{stats.get('exposure_percent', 0.0):.1f}%")
+        self.max_position_var.set(f"{stats.get('max_position_pct', 10.0):.1f}%")
+        self.drawdown_var.set(f"{stats.get('drawdown_percent', 0.0):.1f}%")
+
+        # Color-code risk metrics based on values
+        exposure_pct = stats.get('exposure_percent', 0.0)
+        if exposure_pct > 80.0:
+            self.exposure_var.configure(foreground="red")
+        elif exposure_pct > 50.0:
+            self.exposure_var.configure(foreground="orange")
+        else:
+            self.exposure_var.configure(foreground="green")
+
+        drawdown_pct = stats.get('drawdown_percent', 0.0)
+        if drawdown_pct > 10.0:
+            self.drawdown_var.configure(foreground="red")
+        elif drawdown_pct > 5.0:
+            self.drawdown_var.configure(foreground="orange")
+        else:
+            self.drawdown_var.configure(foreground="green")
 
     def _add_log(self, message: dict):
         """
