@@ -1,0 +1,304 @@
+# Day Trading Algorithm Configuration
+
+general:
+  name: "Day Trading Algorithm"
+  version: "0.1.0"
+  initial_capital: 50.0  # Starting capital in GBP
+  currency: "GBP"
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+data:
+  provider: "yahoo_finance"  # Using Yahoo Finance as it doesn't require an API key
+  symbols:
+    # US Tech Stocks
+    - "AAPL"    # Apple
+    - "MSFT"    # Microsoft
+    - "GOOGL"   # Alphabet (Google)
+    - "AMZN"    # Amazon
+    - "META"    # Meta (Facebook)
+    - "TSLA"    # Tesla
+    - "NVDA"    # NVIDIA
+    - "AMD"     # Advanced Micro Devices
+    - "INTC"    # Intel
+    - "NFLX"    # Netflix
+    - "PYPL"    # PayPal
+    - "ADBE"    # Adobe
+    - "CRM"     # Salesforce
+    - "CSCO"    # Cisco
+    - "ORCL"    # Oracle
+    - "IBM"     # IBM
+    - "QCOM"    # Qualcomm
+    - "TXN"     # Texas Instruments
+    - "MU"      # Micron Technology
+    - "UBER"    # Uber
+    
+    # US Financial Stocks
+    - "JPM"     # JPMorgan Chase
+    - "BAC"     # Bank of America
+    - "WFC"     # Wells Fargo
+    - "C"       # Citigroup
+    - "GS"      # Goldman Sachs
+    - "MS"      # Morgan Stanley
+    - "V"       # Visa
+    - "MA"      # Mastercard
+    - "AXP"     # American Express
+    - "BLK"     # BlackRock
+    
+    # US Retail & Consumer Stocks
+    - "WMT"     # Walmart
+    - "TGT"     # Target
+    - "COST"    # Costco
+    - "HD"      # Home Depot
+    - "LOW"     # Lowe's
+    - "MCD"     # McDonald's
+    - "SBUX"    # Starbucks
+    - "NKE"     # Nike
+    - "DIS"     # Disney
+    - "ABNB"    # Airbnb
+    
+    # US Healthcare Stocks
+    - "JNJ"     # Johnson & Johnson
+    - "PFE"     # Pfizer
+    - "MRNA"    # Moderna
+    - "UNH"     # UnitedHealth
+    - "CVS"     # CVS Health
+    - "ABBV"    # AbbVie
+    - "MRK"     # Merck
+    - "BMY"     # Bristol Myers Squibb
+    - "GILD"    # Gilead Sciences
+    - "AMGN"    # Amgen
+    
+    # UK Stocks
+    - "LLOY.L"  # Lloyds Banking Group
+    - "BARC.L"  # Barclays
+    - "RR.L"    # Rolls-Royce Holdings
+    - "BP.L"    # BP
+    - "SHEL.L"  # Shell
+    - "GSK.L"   # GlaxoSmithKline
+    - "AZN.L"   # AstraZeneca
+    - "HSBA.L"  # HSBC
+    - "VOD.L"   # Vodafone
+    - "BT-A.L"  # BT Group
+    
+    # Small Cap & Volatile Stocks
+    - "AMC"     # AMC Entertainment
+    - "GME"     # GameStop
+    - "PLTR"    # Palantir
+    - "RIVN"    # Rivian Automotive
+    - "LCID"    # Lucid Group
+    - "HOOD"    # Robinhood
+    - "SNAP"    # Snap
+    - "PINS"    # Pinterest
+    - "RBLX"    # Roblox
+    - "DKNG"    # DraftKings
+    
+    # ETFs for Market Indices
+    - "SPY"     # S&P 500 ETF
+    - "QQQ"     # Nasdaq-100 ETF
+    - "DIA"     # Dow Jones Industrial Average ETF
+    - "IWM"     # Russell 2000 ETF
+    - "EFA"     # MSCI EAFE ETF (International Developed Markets)
+    
+    # Sector ETFs
+    - "XLK"     # Technology Sector ETF
+    - "XLF"     # Financial Sector ETF
+    - "XLE"     # Energy Sector ETF
+    - "XLV"     # Healthcare Sector ETF
+    - "XLY"     # Consumer Discretionary Sector ETF
+    - "XLP"     # Consumer Staples Sector ETF
+    - "XLI"     # Industrial Sector ETF
+    - "XLB"     # Materials Sector ETF
+    - "XLU"     # Utilities Sector ETF
+    - "XLRE"    # Real Estate Sector ETF
+    
+    # Commodities & Precious Metals
+    - "GLD"     # Gold ETF
+    - "SLV"     # Silver ETF
+    - "USO"     # Oil ETF
+    - "UNG"     # Natural Gas ETF
+    - "DBC"     # Commodity Index ETF
+    
+    # Volatility & Inverse ETFs
+    - "VXX"     # Volatility ETF
+    - "UVXY"    # Leveraged Volatility ETF
+    - "SQQQ"    # 3x Inverse Nasdaq-100 ETF
+    - "SPXU"    # 3x Inverse S&P 500 ETF
+    - "TQQQ"    # 3x Leveraged Nasdaq-100 ETF
+    
+  timeframes:
+    - "1h"
+    - "15m"
+    - "5m"
+  cache_dir: "data/cache"
+  history_days: 30  # Days of historical data to retrieve
+
+analysis:
+  indicators:
+    moving_averages:
+      - type: "SMA"  # Simple Moving Average
+        periods: [9, 20, 50]
+      - type: "EMA"  # Exponential Moving Average
+        periods: [8, 13, 21]
+    rsi:
+      period: 14
+      overbought: 70
+      oversold: 30
+    atr:
+      period: 14
+    macd:
+      fast_period: 12
+      slow_period: 26
+      signal_period: 9
+    bollinger_bands:
+      period: 20
+      std_dev: 2.0
+    volume_oscillator:
+      short_period: 5
+      long_period: 10
+
+strategy:
+  name: "intraday_momentum"
+  ma_type: "EMA"  # Options: SMA, EMA
+  fast_ma_period: 8
+  slow_ma_period: 21
+  trend_ma_period: 50
+  rsi_period: 14
+  rsi_overbought: 70
+  rsi_oversold: 30
+  atr_period: 14
+  atr_multiplier: 1.5  # Tighter stops for day trading
+  volume_ma_period: 10
+  risk_reward_ratio: 1.5  # Lower for day trading
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  bb_period: 20
+  bb_std_dev: 2.0
+  
+  # Day trading specific parameters
+  session_start: "09:30"  # Market open (EST)
+  session_end: "16:00"    # Market close (EST)
+  avoid_first_minutes: 15  # Avoid trading in first 15 minutes
+  avoid_last_minutes: 15   # Avoid trading in last 15 minutes
+  max_trades_per_day: 10   # Maximum trades per day
+  profit_taking_threshold: 0.5  # Take profits at 0.5% gain
+  stop_loss_threshold: 0.3      # Stop loss at 0.3% loss
+
+risk:
+  max_risk_per_trade: 0.01  # 1% of account per trade (more conservative for day trading)
+  risk_reward_ratio: 1.5    # Minimum reward:risk ratio
+  max_open_positions: 5     # More positions for day trading
+  stop_loss:
+    method: "atr"  # Options: atr, percent, support_resistance
+    atr_multiplier: 1.5
+    percent: 0.3   # 0.3% from entry price (if method is percent)
+  initial_balance: 50.0
+  currency: "GBP"
+  risk_per_trade: 0.01
+  slippage: 0.001
+  commission: 0.002
+  enable_fractional_shares: true
+  max_daily_drawdown: 5.0   # Maximum daily drawdown percentage
+  max_daily_loss: 3.0       # Maximum daily loss percentage
+
+simulation:
+  slippage: 0.001  # 0.1% slippage on entries and exits
+  commission: 0.002  # 0.2% commission per trade
+  enable_fractional_shares: true
+
+performance:
+  metrics:
+    win_rate: true
+    profit_factor: true
+    max_drawdown: true
+    sharpe_ratio: true
+    daily_returns: true
+    hourly_returns: true
+    avg_trade_duration: true
+  reporting:
+    frequency: "hourly"  # Options: hourly, daily, weekly
+    save_to_file: true
+    plot_equity_curve: true
+    plot_drawdowns: true
+    plot_win_loss_distribution: true
+
+optimization:
+  enable: true
+  method: "genetic"  # Options: grid_search, random_search, genetic
+  parameters:
+    - "fast_ma_period"
+    - "slow_ma_period"
+    - "rsi_period"
+    - "rsi_oversold"
+    - "rsi_overbought"
+    - "atr_period"
+    - "atr_multiplier"
+    - "volume_ma_period"
+    - "macd_fast"
+    - "macd_slow"
+    - "macd_signal"
+    - "profit_taking_threshold"
+    - "stop_loss_threshold"
+  metric: "sharpe_ratio"  # Metric to optimize for
+  population_size: 50
+  generations: 20
+  mutation_rate: 0.2
+  crossover_rate: 0.7
+  random_trials: 200
+  start_date: "2023-01-01"
+  end_date: "2023-12-31"
+  timeframe: "1h"
+
+adaptive_ml:
+  model_type: "gradient_boosting"  # Options: random_forest, gradient_boosting
+  test_size: 0.2
+  random_state: 42
+  n_estimators: 200
+  max_depth: 8
+  min_samples_split: 2
+  min_samples_leaf: 1
+  prediction_threshold: 0.6
+  feature_importance_threshold: 0.01
+  learning_rate: 0.1
+  online_learning: true
+  model_path: "models"
+  model_name: "day_trading_ml_model"
+  retrain_interval: 5
+  memory_window: 1000
+  
+  # Features specific to day trading
+  features:
+    - "rsi"
+    - "macd"
+    - "macd_signal"
+    - "macd_hist"
+    - "bb_upper"
+    - "bb_lower"
+    - "bb_width"
+    - "volume_oscillator"
+    - "price_change_1h"
+    - "price_change_4h"
+    - "price_change_1d"
+    - "volume_change_1h"
+    - "volume_change_4h"
+    - "volume_change_1d"
+    - "hour_of_day"
+    - "day_of_week"
+    - "is_market_open"
+    - "time_to_close"
+    - "vwap_distance"
+
+paper_trading:
+  update_interval: 30  # Update every 30 seconds
+  state_file: "day_trading_paper_state.json"
+  timeframe: "5m"
+  max_trades_per_day: 10
+  trading_hours:
+    start: "09:30"
+    end: "16:00"
+  trading_days:
+    - "Monday"
+    - "Tuesday"
+    - "Wednesday"
+    - "Thursday"
+    - "Friday"
