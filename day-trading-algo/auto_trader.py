@@ -7,6 +7,7 @@ Automated Day Trading Script
 This script automatically starts the day trading algorithm at market open,
 monitors multiple stocks, executes trades, and logs all trade details.
 It runs autonomously and can be scheduled to start automatically.
+Includes a graphical user interface to monitor trading activity.
 """
 
 import os
@@ -17,6 +18,8 @@ import logging
 import argparse
 import schedule
 import pandas as pd
+import threading
+import uuid
 from datetime import datetime, timedelta
 import pytz
 import signal
@@ -30,21 +33,28 @@ from src.data.models import TimeFrame
 from src.simulation.paper_trader import PaperTrader
 from src.strategy.intraday_strategy import IntradayStrategy
 from src.data.provider import YahooFinanceProvider
+from src.ui.trading_ui import TradingUI
 
 
 # Global variables
 running = True
 paper_trader = None
 logger = logging.getLogger(__name__)
+ui = None
+active_trades = {}
+total_trades = 0
+winning_trades = 0
+losing_trades = 0
+balance = 50.0
 
 
 def load_config(config_path: str) -> dict:
     """
     Load configuration from a YAML file.
-    
+
     Args:
         config_path: Path to the configuration file
-        
+
     Returns:
         dict: Configuration dictionary
     """
@@ -60,10 +70,10 @@ def load_config(config_path: str) -> dict:
 def load_stock_list(file_path: str = "config/stock_list.txt") -> list:
     """
     Load list of stocks to trade from a file.
-    
+
     Args:
         file_path: Path to the stock list file
-        
+
     Returns:
         list: List of stock symbols
     """
@@ -71,7 +81,7 @@ def load_stock_list(file_path: str = "config/stock_list.txt") -> list:
         if not os.path.exists(file_path):
             # Create default stock list if file doesn't exist
             default_stocks = [
-                "AAPL", "MSFT", "GOOGL", "AMZN", "META", 
+                "AAPL", "MSFT", "GOOGL", "AMZN", "META",
                 "TSLA", "NVDA", "AMD", "INTC", "NFLX",
                 "JPM", "BAC", "WMT", "DIS", "CSCO",
                 "PFE", "KO", "PEP", "T", "VZ"
@@ -81,7 +91,7 @@ def load_stock_list(file_path: str = "config/stock_list.txt") -> list:
                 f.write('\n'.join(default_stocks))
             logger.info(f"Created default stock list at {file_path}")
             return default_stocks
-        
+
         with open(file_path, 'r') as file:
             stocks = [line.strip() for line in file if line.strip()]
         logger.info(f"Loaded {len(stocks)} stocks from {file_path}")
@@ -95,71 +105,245 @@ def load_stock_list(file_path: str = "config/stock_list.txt") -> list:
 def is_market_open() -> bool:
     """
     Check if the US stock market is currently open.
-    
+
     Returns:
         bool: True if market is open, False otherwise
     """
     # Get current time in Eastern Time (US market time)
     eastern = pytz.timezone('US/Eastern')
     now = datetime.now(eastern)
-    
+
     # Check if it's a weekday
     if now.weekday() >= 5:  # 5 = Saturday, 6 = Sunday
         return False
-    
+
     # Check if it's between 9:30 AM and 4:00 PM Eastern
     market_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
     market_close = now.replace(hour=16, minute=0, second=0, microsecond=0)
-    
+
     return market_open <= now <= market_close
 
 
 def get_next_market_open() -> datetime:
     """
     Get the next market open time.
-    
+
     Returns:
         datetime: Next market open time
     """
     eastern = pytz.timezone('US/Eastern')
     now = datetime.now(eastern)
-    
+
     # Set to 9:30 AM today
     next_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
-    
+
     # If it's already past 9:30 AM, set to tomorrow
     if now > next_open:
         next_open = next_open + timedelta(days=1)
-    
+
     # If it's weekend, move to Monday
     while next_open.weekday() >= 5:  # 5 = Saturday, 6 = Sunday
         next_open = next_open + timedelta(days=1)
-    
+
     return next_open
+
+
+def on_trade_opened(trade_data):
+    """
+    Callback function for when a trade is opened.
+
+    Args:
+        trade_data: Trade data dictionary
+    """
+    global ui, active_trades, total_trades, balance
+
+    # Generate a unique ID for the trade
+    trade_id = str(uuid.uuid4())
+
+    # Add trade to active trades
+    active_trades[trade_id] = trade_data
+
+    # Update total trades
+    total_trades += 1
+
+    # Update balance
+    balance -= trade_data.get("cost", 0.0)
+
+    # Format trade data for UI
+    ui_trade = {
+        "id": trade_id,
+        "symbol": trade_data.get("symbol", ""),
+        "direction": trade_data.get("direction", ""),
+        "entry_time": trade_data.get("entry_time", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        "entry_price": trade_data.get("entry_price", 0.0),
+        "current_price": trade_data.get("entry_price", 0.0),
+        "profit_loss": 0.0
+    }
+
+    # Send trade to UI
+    if ui:
+        ui.add_message({
+            "type": "trade_opened",
+            "trade": ui_trade
+        })
+
+        # Update statistics
+        ui.add_message({
+            "type": "statistics",
+            "statistics": {
+                "total_trades": total_trades,
+                "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
+                "profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+                "balance": balance
+            }
+        })
+
+    # Log trade
+    logger.info(f"Trade opened: {ui_trade['direction']} {ui_trade['symbol']} at ${ui_trade['entry_price']:.2f}")
+
+
+def on_trade_closed(trade_data):
+    """
+    Callback function for when a trade is closed.
+
+    Args:
+        trade_data: Trade data dictionary
+    """
+    global ui, active_trades, winning_trades, losing_trades, balance
+
+    # Find the trade in active trades
+    trade_id = None
+    for tid, trade in active_trades.items():
+        if trade.get("symbol") == trade_data.get("symbol") and trade.get("direction") == trade_data.get("direction"):
+            trade_id = tid
+            break
+
+    if trade_id is None:
+        logger.warning(f"Trade not found in active trades: {trade_data}")
+        return
+
+    # Get the trade from active trades
+    trade = active_trades.pop(trade_id, {})
+
+    # Calculate profit/loss
+    profit_loss = trade_data.get("profit_loss", 0.0)
+
+    # Update balance
+    balance += trade_data.get("exit_price", 0.0) * trade_data.get("size", 1.0)
+
+    # Update win/loss count
+    if profit_loss > 0:
+        winning_trades += 1
+    else:
+        losing_trades += 1
+
+    # Format trade data for UI
+    ui_trade = {
+        "id": trade_id,
+        "symbol": trade_data.get("symbol", ""),
+        "direction": trade_data.get("direction", ""),
+        "entry_time": trade.get("entry_time", ""),
+        "exit_time": trade_data.get("exit_time", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        "entry_price": trade.get("entry_price", 0.0),
+        "exit_price": trade_data.get("exit_price", 0.0),
+        "profit_loss": profit_loss
+    }
+
+    # Send trade to UI
+    if ui:
+        ui.add_message({
+            "type": "trade_closed",
+            "trade": ui_trade
+        })
+
+        # Update statistics
+        ui.add_message({
+            "type": "statistics",
+            "statistics": {
+                "total_trades": total_trades,
+                "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
+                "profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+                "balance": balance
+            }
+        })
+
+    # Log trade
+    result = "WIN" if profit_loss > 0 else "LOSE"
+    logger.info(f"Trade closed: {ui_trade['direction']} {ui_trade['symbol']} at ${ui_trade['exit_price']:.2f}, {result}, P/L: ${profit_loss:.2f}")
+
+
+def on_price_update(symbol, price):
+    """
+    Callback function for price updates.
+
+    Args:
+        symbol: Symbol that was updated
+        price: New price
+    """
+    global ui, active_trades
+
+    # Update active trades with new price
+    for trade_id, trade in active_trades.items():
+        if trade.get("symbol") == symbol:
+            # Calculate profit/loss
+            entry_price = trade.get("entry_price", 0.0)
+            size = trade.get("size", 1.0)
+            direction = trade.get("direction", "")
+
+            if direction == "LONG":
+                profit_loss = (price - entry_price) * size
+            else:  # SHORT
+                profit_loss = (entry_price - price) * size
+
+            # Update trade
+            trade["current_price"] = price
+            trade["profit_loss"] = profit_loss
+
+            # Update UI
+            if ui:
+                ui.update_active_trade(trade_id, price, profit_loss)
 
 
 def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
     """
     Start the day trading algorithm.
-    
+
     Args:
         config: Configuration dictionary
         symbols: List of symbols to trade
         timeframe: Timeframe to use
     """
-    global paper_trader
-    
+    global paper_trader, ui
+
     logger.info(f"Starting day trading algorithm with {len(symbols)} symbols")
-    
+
+    # Update UI status
+    if ui:
+        ui.add_message({
+            "type": "status",
+            "status": "ONLINE"
+        })
+
+        ui.add_message({
+            "type": "log",
+            "level": "INFO",
+            "message": f"Starting day trading algorithm with {len(symbols)} symbols"
+        })
+
     # Initialize data provider
     data_provider = YahooFinanceProvider()
-    
+
     # Initialize strategy
     strategy = IntradayStrategy(config)
-    
-    # Initialize paper trader
+
+    # Initialize paper trader with callbacks
     paper_trader = PaperTrader(config)
-    
+    paper_trader.set_callbacks({
+        "on_trade_opened": on_trade_opened,
+        "on_trade_closed": on_trade_closed,
+        "on_price_update": on_price_update
+    })
+
     # Start paper trading
     try:
         paper_trader.run(
@@ -171,35 +355,76 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
         )
     except Exception as e:
         logger.error(f"Error in paper trading: {e}")
+        if ui:
+            ui.add_message({
+                "type": "log",
+                "level": "ERROR",
+                "message": f"Error in paper trading: {e}"
+            })
     finally:
         if paper_trader:
             paper_trader.stop()
             logger.info("Paper trading stopped")
 
+            # Update UI status
+            if ui:
+                ui.add_message({
+                    "type": "status",
+                    "status": "OFFLINE"
+                })
+
+                ui.add_message({
+                    "type": "log",
+                    "level": "INFO",
+                    "message": "Paper trading stopped"
+                })
+
 
 def stop_trading():
     """Stop the day trading algorithm."""
-    global paper_trader
-    
+    global paper_trader, ui
+
     if paper_trader:
         logger.info("Stopping day trading algorithm")
         paper_trader.stop()
 
+        # Update UI status
+        if ui:
+            ui.add_message({
+                "type": "status",
+                "status": "OFFLINE"
+            })
+
+            ui.add_message({
+                "type": "log",
+                "level": "INFO",
+                "message": "Day trading algorithm stopped"
+            })
+
 
 def signal_handler(sig, frame):
     """Handle interrupt signals."""
-    global running
-    
+    global running, ui
+
     logger.info("Received interrupt signal, shutting down...")
     running = False
     stop_trading()
+
+    # Update UI
+    if ui:
+        ui.add_message({
+            "type": "log",
+            "level": "WARNING",
+            "message": "Received interrupt signal, shutting down..."
+        })
+
     sys.exit(0)
 
 
 def schedule_trading(config: dict, symbols: list, timeframe: TimeFrame):
     """
     Schedule trading to start at market open and stop at market close.
-    
+
     Args:
         config: Configuration dictionary
         symbols: List of symbols to trade
@@ -209,10 +434,10 @@ def schedule_trading(config: dict, symbols: list, timeframe: TimeFrame):
     schedule.every().day.at("09:30").do(
         lambda: start_trading(config, symbols, timeframe)
     ).tag("trading")
-    
+
     # Schedule trading to stop at market close (4:00 PM Eastern)
     schedule.every().day.at("16:00").do(stop_trading).tag("trading")
-    
+
     logger.info("Trading scheduled to start at 9:30 AM and stop at 4:00 PM Eastern time")
 
 
@@ -223,25 +448,25 @@ def generate_daily_report():
         if not os.path.exists("reports/trade_log.csv"):
             logger.info("No trade log found, skipping daily report")
             return
-        
+
         # Read trade log
         trades_df = pd.read_csv("reports/trade_log.csv")
-        
+
         # Filter trades for today
         today = datetime.now().strftime("%Y-%m-%d")
         today_trades = trades_df[trades_df["entry_time"].str.contains(today)]
-        
+
         if len(today_trades) == 0:
             logger.info(f"No trades found for {today}, skipping daily report")
             return
-        
+
         # Calculate statistics
         total_trades = len(today_trades)
         winning_trades = len(today_trades[today_trades["profit_loss"] > 0])
         losing_trades = len(today_trades[today_trades["profit_loss"] <= 0])
         win_rate = winning_trades / total_trades * 100 if total_trades > 0 else 0
         total_profit = today_trades["profit_loss"].sum()
-        
+
         # Generate report
         report = f"""
 === Daily Trading Report for {today} ===
@@ -252,24 +477,54 @@ Win Rate: {win_rate:.2f}%
 Total Profit/Loss: {total_profit:.2f}
 =======================================
 """
-        
+
         # Save report to file
         report_file = f"reports/daily_report_{today}.txt"
         with open(report_file, "w") as f:
             f.write(report)
-        
+
         logger.info(f"Daily report saved to {report_file}")
-        
+
         # Also print to console
         print(report)
     except Exception as e:
         logger.error(f"Error generating daily report: {e}")
 
 
+def process_ui_commands():
+    """
+    Process commands from the UI.
+    """
+    global ui, running
+
+    if ui and not ui.queue.empty():
+        try:
+            message = ui.queue.get_nowait()
+            if message.get("type") == "command":
+                command = message.get("command")
+
+                if command == "start":
+                    # Start trading
+                    logger.info("Received start command from UI")
+                    # This will be handled by the UI button callback
+                elif command == "stop":
+                    # Stop trading
+                    logger.info("Received stop command from UI")
+                    stop_trading()
+                elif command == "exit":
+                    # Exit the application
+                    logger.info("Received exit command from UI")
+                    running = False
+
+            ui.queue.task_done()
+        except Exception as e:
+            logger.error(f"Error processing UI command: {e}")
+
+
 def main():
     """Main function."""
-    global running
-    
+    global running, ui
+
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Automated Day Trading Script")
     parser.add_argument("--config", default="config/best_config_95plus_20250418_223546.yaml",
@@ -282,22 +537,24 @@ def main():
                         help="Start trading immediately instead of waiting for market open")
     parser.add_argument("--test-mode", action="store_true",
                         help="Run in test mode with simulated market hours")
-    
+    parser.add_argument("--no-ui", action="store_true",
+                        help="Run without the graphical user interface")
+
     args = parser.parse_args()
-    
+
     # Set up logging
     setup_logging()
-    
+
     # Set up signal handlers
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-    
+
     # Load configuration
     config = load_config(args.config)
-    
+
     # Load stock list
     symbols = load_stock_list(args.stock_list)
-    
+
     # Parse timeframe
     timeframe_map = {
         "1m": TimeFrame.MINUTE_1,
@@ -306,13 +563,39 @@ def main():
         "1h": TimeFrame.HOUR_1
     }
     timeframe = timeframe_map[args.timeframe]
-    
+
     # Create reports directory if it doesn't exist
     os.makedirs("reports", exist_ok=True)
-    
+
     # Schedule daily report generation at 4:15 PM Eastern
     schedule.every().day.at("16:15").do(generate_daily_report).tag("reporting")
-    
+
+    # Initialize UI
+    if not args.no_ui:
+        # Create UI in a separate thread
+        ui = TradingUI()
+        ui_thread = threading.Thread(target=ui.run)
+        ui_thread.daemon = True
+        ui_thread.start()
+
+        # Add initial log message
+        ui.add_message({
+            "type": "log",
+            "level": "INFO",
+            "message": "Day Trading Algorithm initialized"
+        })
+
+        # Add initial statistics
+        ui.add_message({
+            "type": "statistics",
+            "statistics": {
+                "total_trades": 0,
+                "win_rate": 0.0,
+                "profit_loss": 0.0,
+                "balance": 50.0
+            }
+        })
+
     if args.test_mode:
         logger.info("Running in test mode with simulated market hours")
         # Start trading immediately in test mode
@@ -320,7 +603,7 @@ def main():
     else:
         # Schedule trading
         schedule_trading(config, symbols, timeframe)
-        
+
         # Start trading immediately if requested
         if args.start_now:
             logger.info("Starting trading immediately")
@@ -334,11 +617,26 @@ def main():
                 next_open = get_next_market_open()
                 logger.info(f"Market is closed, next open at {next_open.strftime('%Y-%m-%d %H:%M:%S %Z')}")
                 logger.info("Waiting for market open...")
-    
+
+                # Update UI
+                if ui:
+                    ui.add_message({
+                        "type": "log",
+                        "level": "INFO",
+                        "message": f"Market is closed, next open at {next_open.strftime('%Y-%m-%d %H:%M:%S %Z')}"
+                    })
+
     # Main loop
     while running:
+        # Process UI commands
+        if ui:
+            process_ui_commands()
+
+        # Run scheduled tasks
         schedule.run_pending()
-        time.sleep(1)
+
+        # Sleep to avoid high CPU usage
+        time.sleep(0.1)
 
 
 if __name__ == "__main__":
