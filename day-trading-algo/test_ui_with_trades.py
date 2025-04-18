@@ -56,7 +56,7 @@ def simulate_trading(ui):
 
             # Calculate position size based on available balance
             # If price > £50, buy partial shares to stay within budget
-            max_affordable_size = balance * 0.9 / entry_price  # Use 90% of balance at most
+            max_affordable_size = balance * 0.1 / entry_price  # Use only 10% of balance at most
 
             if entry_price > 50.0:
                 # For expensive stocks, buy partial shares
