@@ -1,0 +1,23 @@
+2025-04-18 21:04:03,108 - swing_trading - INFO - Starting Strategy Optimization
+2025-04-18 21:04:03,108 - swing_trading - INFO - Data provider initialized: YahooFinanceProvider
+2025-04-18 21:04:03,108 - swing_trading - INFO - Retrieving data for F
+2025-04-18 21:04:03,415 - swing_trading - INFO - Retrieved 250 data points for F
+2025-04-18 21:04:03,415 - swing_trading - INFO - Retrieving data for NOK
+2025-04-18 21:04:03,542 - swing_trading - INFO - Retrieved 250 data points for NOK
+2025-04-18 21:04:03,542 - swing_trading - INFO - Retrieving data for PLTR
+2025-04-18 21:04:03,617 - swing_trading - INFO - Retrieved 250 data points for PLTR
+2025-04-18 21:04:03,617 - swing_trading - INFO - Retrieving data for LLOY.L
+2025-04-18 21:04:03,730 - swing_trading - INFO - Retrieved 255 data points for LLOY.L
+2025-04-18 21:04:03,730 - swing_trading - INFO - Retrieving data for RR.L
+2025-04-18 21:04:03,865 - swing_trading - INFO - Retrieved 255 data points for RR.L
+2025-04-18 21:04:03,866 - swing_trading - INFO - Retrieving data for EZJ.L
+2025-04-18 21:04:03,961 - swing_trading - INFO - Retrieved 255 data points for EZJ.L
+2025-04-18 21:04:03,962 - swing_trading - INFO - Retrieving data for BARC.L
+2025-04-18 21:04:04,083 - swing_trading - INFO - Retrieved 255 data points for BARC.L
+2025-04-18 21:04:04,083 - swing_trading - INFO - Retrieving data for BP.L
+2025-04-18 21:04:04,196 - swing_trading - INFO - Retrieved 254 data points for BP.L
+2025-04-18 21:04:04,196 - swing_trading - INFO - Running optimization with method: genetic
+2025-04-18 21:04:51,641 - swing_trading - INFO - Optimization completed
+2025-04-18 21:04:51,642 - swing_trading - INFO - Best parameters: {'ma_type': 'SMA', 'fast_ma_period': 11, 'slow_ma_period': 30, 'trend_ma_period': 30, 'rsi_period': 7, 'rsi_overbought': 65, 'rsi_oversold': 25, 'atr_period': 10, 'atr_multiplier': 2.0, 'volume_ma_period': 20, 'risk_reward_ratio': 2.0}
+2025-04-18 21:04:51,642 - swing_trading - INFO - Score: 0.0
+2025-04-18 21:04:51,644 - swing_trading - INFO - Results saved to reports\optimization_result_20250418_210451.yaml

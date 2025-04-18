@@ -1,0 +1,74 @@
+{
+    "symbol": "F",
+    "initial_balance": 50.0,
+    "final_balance": 59.656093167142274,
+    "total_return": 9.656093167142274,
+    "total_return_percent": 19.312186334284554,
+    "total_trades": 6,
+    "winning_trades": 6,
+    "losing_trades": 0,
+    "win_rate": 1.0,
+    "profit_factor": Infinity,
+    "trades": [
+        {
+            "entry_date": "2025-02-06 00:00:00-05:00",
+            "entry_price": 8.966961860656738,
+            "direction": "long",
+            "position_size": 5.576024608666955,
+            "exit_date": "2025-02-20 00:00:00-05:00",
+            "exit_price": 9.390000343322754,
+            "profit_loss": 2.3588729897588325,
+            "profit_loss_percent": 4.717745979517662
+        },
+        {
+            "entry_date": "2025-02-21 00:00:00-05:00",
+            "entry_price": 9.279999732971191,
+            "direction": "long",
+            "position_size": 5.642120096591319,
+            "exit_date": "2025-02-25 00:00:00-05:00",
+            "exit_price": 9.420000076293945,
+            "profit_loss": 0.7898987505909941,
+            "profit_loss_percent": 1.508624432663952
+        },
+        {
+            "entry_date": "2025-02-26 00:00:00-05:00",
+            "entry_price": 9.470000267028809,
+            "direction": "long",
+            "position_size": 5.6123305429457115,
+            "exit_date": "2025-03-05 00:00:00-05:00",
+            "exit_price": 9.649999618530273,
+            "profit_loss": 1.0102158581420921,
+            "profit_loss_percent": 1.9007322748253674
+        },
+        {
+            "entry_date": "2025-03-11 00:00:00-04:00",
+            "entry_price": 9.6899995803833,
+            "direction": "long",
+            "position_size": 5.5891630488955695,
+            "exit_date": "2025-03-19 00:00:00-04:00",
+            "exit_price": 10.170000076293945,
+            "profit_loss": 2.6828010351953235,
+            "profit_loss_percent": 4.9535657037836245
+        },
+        {
+            "entry_date": "2025-04-07 00:00:00-04:00",
+            "entry_price": 9.239999771118164,
+            "direction": "long",
+            "position_size": 6.151708878972042,
+            "exit_date": "2025-04-09 00:00:00-04:00",
+            "exit_price": 9.5,
+            "profit_loss": 1.5994457165471534,
+            "profit_loss_percent": 2.813855360630302
+        },
+        {
+            "entry_date": "2025-04-10 00:00:00-04:00",
+            "entry_price": 9.140000343322754,
+            "direction": "long",
+            "position_size": 6.394007894422976,
+            "exit_date": "2025-04-11 00:00:00-04:00",
+            "exit_price": 9.329999923706055,
+            "profit_loss": 1.214858816907878,
+            "profit_loss_percent": 2.0787699479913657
+        }
+    ]
+}

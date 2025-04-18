@@ -1,0 +1,3 @@
+"""
+Swing Trading Algorithm package.
+"""

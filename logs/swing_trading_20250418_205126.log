@@ -1,0 +1,217 @@
+2025-04-18 20:51:26,421 - swing_trading - INFO - Starting Extended Backtest
+2025-04-18 20:51:26,421 - swing_trading - INFO - Data provider initialized: YahooFinanceProvider
+2025-04-18 20:51:26,422 - swing_trading - INFO - Strategy initialized: Basic Swing Strategy
+2025-04-18 20:51:26,426 - swing_trading - INFO - Running backtest from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:26,427 - swing_trading - INFO - Retrieving data for F from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:26,829 - swing_trading - INFO - Retrieved 252 data points for F
+2025-04-18 20:51:26,830 - swing_trading - INFO - Retrieving data for NOK from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:26,964 - swing_trading - INFO - Retrieved 252 data points for NOK
+2025-04-18 20:51:26,964 - swing_trading - INFO - Retrieving data for PLTR from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:27,805 - swing_trading - INFO - Retrieved 0 data points for PLTR
+2025-04-18 20:51:27,805 - swing_trading - INFO - Retrieving data for LLOY.L from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:27,936 - swing_trading - INFO - Retrieved 253 data points for LLOY.L
+2025-04-18 20:51:27,936 - swing_trading - INFO - Retrieving data for RR.L from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:28,059 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 20:51:28,059 - swing_trading - INFO - Retrieving data for EZJ.L from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:28,170 - swing_trading - INFO - Retrieved 253 data points for EZJ.L
+2025-04-18 20:51:28,170 - swing_trading - INFO - Retrieving data for BARC.L from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:28,319 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 20:51:28,319 - swing_trading - INFO - Retrieving data for BP.L from 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:51:28,481 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 20:52:04,581 - swing_trading - INFO - Backtest completed for period 2013-01-01 00:00:00 to 2014-01-01 00:00:00
+2025-04-18 20:52:04,581 - swing_trading - INFO - Total trades: 6
+2025-04-18 20:52:04,581 - swing_trading - INFO - Total return: 0.90%
+2025-04-18 20:52:04,582 - swing_trading - INFO - Running backtest from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:04,582 - swing_trading - INFO - Retrieving data for F from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:04,773 - swing_trading - INFO - Retrieved 252 data points for F
+2025-04-18 20:52:04,773 - swing_trading - INFO - Retrieving data for NOK from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:04,916 - swing_trading - INFO - Retrieved 252 data points for NOK
+2025-04-18 20:52:04,918 - swing_trading - INFO - Retrieving data for PLTR from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:05,441 - swing_trading - INFO - Retrieved 0 data points for PLTR
+2025-04-18 20:52:05,441 - swing_trading - INFO - Retrieving data for LLOY.L from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:05,605 - swing_trading - INFO - Retrieved 253 data points for LLOY.L
+2025-04-18 20:52:05,605 - swing_trading - INFO - Retrieving data for RR.L from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:05,763 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 20:52:05,763 - swing_trading - INFO - Retrieving data for EZJ.L from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:05,886 - swing_trading - INFO - Retrieved 253 data points for EZJ.L
+2025-04-18 20:52:05,886 - swing_trading - INFO - Retrieving data for BARC.L from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:06,075 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 20:52:06,075 - swing_trading - INFO - Retrieving data for BP.L from 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:06,226 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 20:52:42,252 - swing_trading - INFO - Backtest completed for period 2014-01-01 00:00:00 to 2015-01-01 00:00:00
+2025-04-18 20:52:42,252 - swing_trading - INFO - Total trades: 13
+2025-04-18 20:52:42,252 - swing_trading - INFO - Total return: 4.00%
+2025-04-18 20:52:42,252 - swing_trading - INFO - Running backtest from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:42,253 - swing_trading - INFO - Retrieving data for F from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:42,385 - swing_trading - INFO - Retrieved 252 data points for F
+2025-04-18 20:52:42,385 - swing_trading - INFO - Retrieving data for NOK from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:42,526 - swing_trading - INFO - Retrieved 252 data points for NOK
+2025-04-18 20:52:42,526 - swing_trading - INFO - Retrieving data for PLTR from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:43,075 - swing_trading - INFO - Retrieved 0 data points for PLTR
+2025-04-18 20:52:43,075 - swing_trading - INFO - Retrieving data for LLOY.L from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:43,202 - swing_trading - INFO - Retrieved 253 data points for LLOY.L
+2025-04-18 20:52:43,202 - swing_trading - INFO - Retrieving data for RR.L from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:43,321 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 20:52:43,321 - swing_trading - INFO - Retrieving data for EZJ.L from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:43,419 - swing_trading - INFO - Retrieved 253 data points for EZJ.L
+2025-04-18 20:52:43,419 - swing_trading - INFO - Retrieving data for BARC.L from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:43,537 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 20:52:43,537 - swing_trading - INFO - Retrieving data for BP.L from 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:52:43,679 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 20:53:18,614 - swing_trading - INFO - Backtest completed for period 2015-01-01 00:00:00 to 2016-01-01 00:00:00
+2025-04-18 20:53:18,614 - swing_trading - INFO - Total trades: 10
+2025-04-18 20:53:18,614 - swing_trading - INFO - Total return: -8.60%
+2025-04-18 20:53:18,614 - swing_trading - INFO - Running backtest from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:18,615 - swing_trading - INFO - Retrieving data for F from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:18,774 - swing_trading - INFO - Retrieved 252 data points for F
+2025-04-18 20:53:18,776 - swing_trading - INFO - Retrieving data for NOK from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:18,908 - swing_trading - INFO - Retrieved 252 data points for NOK
+2025-04-18 20:53:18,908 - swing_trading - INFO - Retrieving data for PLTR from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:19,459 - swing_trading - INFO - Retrieved 0 data points for PLTR
+2025-04-18 20:53:19,459 - swing_trading - INFO - Retrieving data for LLOY.L from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:19,621 - swing_trading - INFO - Retrieved 253 data points for LLOY.L
+2025-04-18 20:53:19,621 - swing_trading - INFO - Retrieving data for RR.L from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:19,776 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 20:53:19,776 - swing_trading - INFO - Retrieving data for EZJ.L from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:19,893 - swing_trading - INFO - Retrieved 253 data points for EZJ.L
+2025-04-18 20:53:19,893 - swing_trading - INFO - Retrieving data for BARC.L from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:20,024 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 20:53:20,024 - swing_trading - INFO - Retrieving data for BP.L from 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:20,172 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 20:53:56,682 - swing_trading - INFO - Backtest completed for period 2016-01-01 00:00:00 to 2017-01-01 00:00:00
+2025-04-18 20:53:56,683 - swing_trading - INFO - Total trades: 8
+2025-04-18 20:53:56,683 - swing_trading - INFO - Total return: 6.96%
+2025-04-18 20:53:56,683 - swing_trading - INFO - Running backtest from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:56,684 - swing_trading - INFO - Retrieving data for F from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:56,828 - swing_trading - INFO - Retrieved 251 data points for F
+2025-04-18 20:53:56,828 - swing_trading - INFO - Retrieving data for NOK from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:56,950 - swing_trading - INFO - Retrieved 251 data points for NOK
+2025-04-18 20:53:56,950 - swing_trading - INFO - Retrieving data for PLTR from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:57,523 - swing_trading - INFO - Retrieved 0 data points for PLTR
+2025-04-18 20:53:57,524 - swing_trading - INFO - Retrieving data for LLOY.L from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:57,643 - swing_trading - INFO - Retrieved 252 data points for LLOY.L
+2025-04-18 20:53:57,643 - swing_trading - INFO - Retrieving data for RR.L from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:57,773 - swing_trading - INFO - Retrieved 252 data points for RR.L
+2025-04-18 20:53:57,773 - swing_trading - INFO - Retrieving data for EZJ.L from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:57,874 - swing_trading - INFO - Retrieved 252 data points for EZJ.L
+2025-04-18 20:53:57,874 - swing_trading - INFO - Retrieving data for BARC.L from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:58,004 - swing_trading - INFO - Retrieved 252 data points for BARC.L
+2025-04-18 20:53:58,004 - swing_trading - INFO - Retrieving data for BP.L from 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:53:58,138 - swing_trading - INFO - Retrieved 252 data points for BP.L
+2025-04-18 20:54:30,318 - swing_trading - INFO - Backtest completed for period 2017-01-01 00:00:00 to 2018-01-01 00:00:00
+2025-04-18 20:54:30,318 - swing_trading - INFO - Total trades: 10
+2025-04-18 20:54:30,318 - swing_trading - INFO - Total return: -0.13%
+2025-04-18 20:54:30,318 - swing_trading - INFO - Running backtest from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:30,319 - swing_trading - INFO - Retrieving data for F from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:30,481 - swing_trading - INFO - Retrieved 251 data points for F
+2025-04-18 20:54:30,482 - swing_trading - INFO - Retrieving data for NOK from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:30,636 - swing_trading - INFO - Retrieved 251 data points for NOK
+2025-04-18 20:54:30,636 - swing_trading - INFO - Retrieving data for PLTR from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:31,246 - swing_trading - INFO - Retrieved 0 data points for PLTR
+2025-04-18 20:54:31,246 - swing_trading - INFO - Retrieving data for LLOY.L from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:31,376 - swing_trading - INFO - Retrieved 253 data points for LLOY.L
+2025-04-18 20:54:31,376 - swing_trading - INFO - Retrieving data for RR.L from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:31,508 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 20:54:31,509 - swing_trading - INFO - Retrieving data for EZJ.L from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:31,623 - swing_trading - INFO - Retrieved 253 data points for EZJ.L
+2025-04-18 20:54:31,623 - swing_trading - INFO - Retrieving data for BARC.L from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:31,790 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 20:54:31,791 - swing_trading - INFO - Retrieving data for BP.L from 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:54:31,952 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 20:55:04,363 - swing_trading - INFO - Backtest completed for period 2018-01-01 00:00:00 to 2019-01-01 00:00:00
+2025-04-18 20:55:04,364 - swing_trading - INFO - Total trades: 11
+2025-04-18 20:55:04,364 - swing_trading - INFO - Total return: 14.74%
+2025-04-18 20:55:04,365 - swing_trading - INFO - Running backtest from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:04,365 - swing_trading - INFO - Retrieving data for F from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:04,505 - swing_trading - INFO - Retrieved 252 data points for F
+2025-04-18 20:55:04,505 - swing_trading - INFO - Retrieving data for NOK from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:04,640 - swing_trading - INFO - Retrieved 252 data points for NOK
+2025-04-18 20:55:04,641 - swing_trading - INFO - Retrieving data for PLTR from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:05,214 - swing_trading - INFO - Retrieved 0 data points for PLTR
+2025-04-18 20:55:05,215 - swing_trading - INFO - Retrieving data for LLOY.L from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:05,363 - swing_trading - INFO - Retrieved 253 data points for LLOY.L
+2025-04-18 20:55:05,363 - swing_trading - INFO - Retrieving data for RR.L from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:05,520 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 20:55:05,520 - swing_trading - INFO - Retrieving data for EZJ.L from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:05,641 - swing_trading - INFO - Retrieved 253 data points for EZJ.L
+2025-04-18 20:55:05,641 - swing_trading - INFO - Retrieving data for BARC.L from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:05,771 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 20:55:05,771 - swing_trading - INFO - Retrieving data for BP.L from 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:05,905 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 20:55:37,649 - swing_trading - INFO - Backtest completed for period 2019-01-01 00:00:00 to 2020-01-01 00:00:00
+2025-04-18 20:55:37,650 - swing_trading - INFO - Total trades: 10
+2025-04-18 20:55:37,650 - swing_trading - INFO - Total return: 6.58%
+2025-04-18 20:55:37,650 - swing_trading - INFO - Running backtest from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:37,651 - swing_trading - INFO - Retrieving data for F from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:37,792 - swing_trading - INFO - Retrieved 253 data points for F
+2025-04-18 20:55:37,792 - swing_trading - INFO - Retrieving data for NOK from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:37,915 - swing_trading - INFO - Retrieved 253 data points for NOK
+2025-04-18 20:55:37,915 - swing_trading - INFO - Retrieving data for PLTR from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:37,998 - swing_trading - INFO - Retrieved 65 data points for PLTR
+2025-04-18 20:55:37,998 - swing_trading - INFO - Retrieving data for LLOY.L from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:38,143 - swing_trading - INFO - Retrieved 254 data points for LLOY.L
+2025-04-18 20:55:38,143 - swing_trading - INFO - Retrieving data for RR.L from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:38,313 - swing_trading - INFO - Retrieved 254 data points for RR.L
+2025-04-18 20:55:38,313 - swing_trading - INFO - Retrieving data for EZJ.L from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:38,431 - swing_trading - INFO - Retrieved 254 data points for EZJ.L
+2025-04-18 20:55:38,431 - swing_trading - INFO - Retrieving data for BARC.L from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:38,573 - swing_trading - INFO - Retrieved 254 data points for BARC.L
+2025-04-18 20:55:38,573 - swing_trading - INFO - Retrieving data for BP.L from 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:55:38,696 - swing_trading - INFO - Retrieved 254 data points for BP.L
+2025-04-18 20:56:12,541 - swing_trading - INFO - Backtest completed for period 2020-01-01 00:00:00 to 2021-01-01 00:00:00
+2025-04-18 20:56:12,541 - swing_trading - INFO - Total trades: 5
+2025-04-18 20:56:12,542 - swing_trading - INFO - Total return: 3.80%
+2025-04-18 20:56:12,542 - swing_trading - INFO - Running backtest from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:12,544 - swing_trading - INFO - Retrieving data for F from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:12,689 - swing_trading - INFO - Retrieved 252 data points for F
+2025-04-18 20:56:12,689 - swing_trading - INFO - Retrieving data for NOK from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:12,822 - swing_trading - INFO - Retrieved 252 data points for NOK
+2025-04-18 20:56:12,823 - swing_trading - INFO - Retrieving data for PLTR from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:12,894 - swing_trading - INFO - Retrieved 252 data points for PLTR
+2025-04-18 20:56:12,894 - swing_trading - INFO - Retrieving data for LLOY.L from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:13,020 - swing_trading - INFO - Retrieved 253 data points for LLOY.L
+2025-04-18 20:56:13,020 - swing_trading - INFO - Retrieving data for RR.L from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:13,137 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 20:56:13,137 - swing_trading - INFO - Retrieving data for EZJ.L from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:13,232 - swing_trading - INFO - Retrieved 253 data points for EZJ.L
+2025-04-18 20:56:13,232 - swing_trading - INFO - Retrieving data for BARC.L from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:13,348 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 20:56:13,348 - swing_trading - INFO - Retrieving data for BP.L from 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:13,470 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 20:56:50,013 - swing_trading - INFO - Backtest completed for period 2021-01-01 00:00:00 to 2022-01-01 00:00:00
+2025-04-18 20:56:50,014 - swing_trading - INFO - Total trades: 10
+2025-04-18 20:56:50,014 - swing_trading - INFO - Total return: -6.95%
+2025-04-18 20:56:50,014 - swing_trading - INFO - Running backtest from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,015 - swing_trading - INFO - Retrieving data for F from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,154 - swing_trading - INFO - Retrieved 251 data points for F
+2025-04-18 20:56:50,154 - swing_trading - INFO - Retrieving data for NOK from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,298 - swing_trading - INFO - Retrieved 251 data points for NOK
+2025-04-18 20:56:50,298 - swing_trading - INFO - Retrieving data for PLTR from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,373 - swing_trading - INFO - Retrieved 251 data points for PLTR
+2025-04-18 20:56:50,374 - swing_trading - INFO - Retrieving data for LLOY.L from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,497 - swing_trading - INFO - Retrieved 250 data points for LLOY.L
+2025-04-18 20:56:50,497 - swing_trading - INFO - Retrieving data for RR.L from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,626 - swing_trading - INFO - Retrieved 250 data points for RR.L
+2025-04-18 20:56:50,626 - swing_trading - INFO - Retrieving data for EZJ.L from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,725 - swing_trading - INFO - Retrieved 250 data points for EZJ.L
+2025-04-18 20:56:50,725 - swing_trading - INFO - Retrieving data for BARC.L from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:50,900 - swing_trading - INFO - Retrieved 250 data points for BARC.L
+2025-04-18 20:56:50,900 - swing_trading - INFO - Retrieving data for BP.L from 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:56:51,037 - swing_trading - INFO - Retrieved 250 data points for BP.L
+2025-04-18 20:57:28,323 - swing_trading - INFO - Backtest completed for period 2022-01-01 00:00:00 to 2023-01-01 00:00:00
+2025-04-18 20:57:28,323 - swing_trading - INFO - Total trades: 7
+2025-04-18 20:57:28,323 - swing_trading - INFO - Total return: -5.60%
+2025-04-18 20:57:28,324 - swing_trading - INFO - Calculating extended metrics
+2025-04-18 20:57:28,430 - swing_trading - INFO - Extended backtest completed
+2025-04-18 20:57:28,430 - swing_trading - INFO - Total trades: 90
+2025-04-18 20:57:28,430 - swing_trading - INFO - Win rate: 50.00%
+2025-04-18 20:57:28,430 - swing_trading - INFO - Total return: 3.80%
+2025-04-18 20:57:28,430 - swing_trading - INFO - CAGR: 0.47%
+2025-04-18 20:57:28,431 - swing_trading - INFO - Sharpe ratio: 0.37
+2025-04-18 20:57:28,431 - swing_trading - INFO - Sortino ratio: 0.54
+2025-04-18 20:57:28,431 - swing_trading - INFO - Max drawdown: -20.34%
+2025-04-18 20:57:28,657 - swing_trading - INFO - Extended metrics saved to extended_backtest\extended_metrics_20250418_205728.json
+2025-04-18 20:57:29,163 - swing_trading - INFO - Equity curve saved to extended_backtest\equity_curve_20250418_205728.png
+2025-04-18 20:57:29,343 - swing_trading - INFO - Annual returns plot saved to extended_backtest\annual_returns_20250418_205728.png
+2025-04-18 20:57:29,547 - swing_trading - INFO - Drawdowns plot saved to extended_backtest\drawdowns_20250418_205728.png
+2025-04-18 20:57:30,012 - swing_trading - INFO - Monthly returns heatmap saved to extended_backtest\monthly_returns_20250418_205728.png

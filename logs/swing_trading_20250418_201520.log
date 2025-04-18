@@ -1,0 +1,33 @@
+2025-04-18 20:15:20,688 - swing_trading - INFO - Starting Backtest
+2025-04-18 20:15:20,690 - swing_trading - INFO - Data provider initialized: YahooFinanceProvider
+2025-04-18 20:15:20,690 - swing_trading - INFO - Retrieving data for F
+2025-04-18 20:15:21,055 - swing_trading - INFO - Retrieved 250 data points for F
+2025-04-18 20:15:21,055 - swing_trading - INFO - Retrieving data for NOK
+2025-04-18 20:15:21,194 - swing_trading - INFO - Retrieved 250 data points for NOK
+2025-04-18 20:15:21,195 - swing_trading - INFO - Retrieving data for PLTR
+2025-04-18 20:15:21,271 - swing_trading - INFO - Retrieved 250 data points for PLTR
+2025-04-18 20:15:21,273 - swing_trading - INFO - Retrieving data for LLOY.L
+2025-04-18 20:15:21,379 - swing_trading - INFO - Retrieved 251 data points for LLOY.L
+2025-04-18 20:15:21,379 - swing_trading - INFO - Retrieving data for RR.L
+2025-04-18 20:15:21,521 - swing_trading - INFO - Retrieved 251 data points for RR.L
+2025-04-18 20:15:21,521 - swing_trading - INFO - Retrieving data for EZJ.L
+2025-04-18 20:15:21,608 - swing_trading - INFO - Retrieved 251 data points for EZJ.L
+2025-04-18 20:15:21,608 - swing_trading - INFO - Retrieving data for BARC.L
+2025-04-18 20:15:21,715 - swing_trading - INFO - Retrieved 251 data points for BARC.L
+2025-04-18 20:15:21,716 - swing_trading - INFO - Retrieving data for BP.L
+2025-04-18 20:15:21,832 - swing_trading - INFO - Retrieved 251 data points for BP.L
+2025-04-18 20:15:21,832 - swing_trading - INFO - Strategy initialized: Basic Swing Strategy
+2025-04-18 20:15:21,832 - swing_trading - INFO - Running backtest from 2023-01-01 00:00:00 to 2024-01-01 00:00:00
+2025-04-18 20:15:55,941 - swing_trading - INFO - Backtest completed
+2025-04-18 20:15:55,942 - swing_trading - INFO - Initial balance: 50.0 GBP
+2025-04-18 20:15:55,942 - swing_trading - INFO - Final balance: 52.11994028913787 GBP
+2025-04-18 20:15:55,942 - swing_trading - INFO - Total return: 2.1199402891378725 GBP (4.24%)
+2025-04-18 20:15:55,942 - swing_trading - INFO - Total trades: 9
+2025-04-18 20:15:55,942 - swing_trading - INFO - Winning trades: 5 (55.56%)
+2025-04-18 20:15:55,942 - swing_trading - INFO - Losing trades: 4
+2025-04-18 20:15:55,942 - swing_trading - INFO - Profit factor: 0.00
+2025-04-18 20:15:55,942 - swing_trading - INFO - Max drawdown: 0 GBP (0.00%)
+2025-04-18 20:15:55,942 - swing_trading - INFO - Sharpe ratio: 0.00
+2025-04-18 20:15:55,943 - swing_trading - INFO - Sortino ratio: 0.00
+2025-04-18 20:15:55,959 - swing_trading - INFO - Backtest results saved to backtest\backtest_result_20250418_201555.json
+2025-04-18 20:15:56,254 - swing_trading - INFO - Equity curve saved to backtest\equity_curve_20250418_201555.png
