@@ -1,0 +1,275 @@
+adaptive_ml:
+  feature_importance_threshold: 0.01
+  features:
+  - rsi
+  - macd
+  - macd_signal
+  - macd_hist
+  - bb_upper
+  - bb_lower
+  - bb_width
+  - volume_oscillator
+  - price_change_1h
+  - price_change_4h
+  - price_change_1d
+  - volume_change_1h
+  - volume_change_4h
+  - volume_change_1d
+  - hour_of_day
+  - day_of_week
+  - is_market_open
+  - time_to_close
+  - vwap_distance
+  learning_rate: 0.1
+  max_depth: 8
+  memory_window: 1000
+  min_samples_leaf: 1
+  min_samples_split: 2
+  model_name: day_trading_ml_model
+  model_path: models
+  model_type: gradient_boosting
+  n_estimators: 200
+  online_learning: true
+  prediction_threshold: 0.6
+  random_state: 42
+  retrain_interval: 5
+  test_size: 0.2
+analysis:
+  indicators:
+    atr:
+      period: 14
+    bollinger_bands:
+      period: 20
+      std_dev: 2.0
+    macd:
+      fast_period: 12
+      signal_period: 9
+      slow_period: 26
+    moving_averages:
+    - periods:
+      - 9
+      - 20
+      - 50
+      type: SMA
+    - periods:
+      - 8
+      - 13
+      - 21
+      type: EMA
+    rsi:
+      overbought: 70
+      oversold: 30
+      period: 14
+    volume_oscillator:
+      long_period: 10
+      short_period: 5
+data:
+  cache_dir: data/cache
+  history_days: 30
+  provider: yahoo_finance
+  symbols:
+  - AAPL
+  - MSFT
+  - GOOGL
+  - AMZN
+  - META
+  - TSLA
+  - NVDA
+  - AMD
+  - INTC
+  - NFLX
+  - PYPL
+  - ADBE
+  - CRM
+  - CSCO
+  - ORCL
+  - IBM
+  - QCOM
+  - TXN
+  - MU
+  - UBER
+  - JPM
+  - BAC
+  - WFC
+  - C
+  - GS
+  - MS
+  - V
+  - MA
+  - AXP
+  - BLK
+  - WMT
+  - TGT
+  - COST
+  - HD
+  - LOW
+  - MCD
+  - SBUX
+  - NKE
+  - DIS
+  - ABNB
+  - JNJ
+  - PFE
+  - MRNA
+  - UNH
+  - CVS
+  - ABBV
+  - MRK
+  - BMY
+  - GILD
+  - AMGN
+  - LLOY.L
+  - BARC.L
+  - RR.L
+  - BP.L
+  - SHEL.L
+  - GSK.L
+  - AZN.L
+  - HSBA.L
+  - VOD.L
+  - BT-A.L
+  - AMC
+  - GME
+  - PLTR
+  - RIVN
+  - LCID
+  - HOOD
+  - SNAP
+  - PINS
+  - RBLX
+  - DKNG
+  - SPY
+  - QQQ
+  - DIA
+  - IWM
+  - EFA
+  - XLK
+  - XLF
+  - XLE
+  - XLV
+  - XLY
+  - XLP
+  - XLI
+  - XLB
+  - XLU
+  - XLRE
+  - GLD
+  - SLV
+  - USO
+  - UNG
+  - DBC
+  - VXX
+  - UVXY
+  - SQQQ
+  - SPXU
+  - TQQQ
+  timeframes:
+  - 1h
+  - 15m
+  - 5m
+general:
+  currency: GBP
+  initial_capital: 50.0
+  log_level: INFO
+  name: Day Trading Algorithm
+  version: 0.1.0
+optimization:
+  crossover_rate: 0.7
+  enable: true
+  end_date: '2023-12-31'
+  generations: 20
+  method: genetic
+  metric: sharpe_ratio
+  mutation_rate: 0.2
+  parameters:
+  - fast_ma_period
+  - slow_ma_period
+  - rsi_period
+  - rsi_oversold
+  - rsi_overbought
+  - atr_period
+  - atr_multiplier
+  - volume_ma_period
+  - macd_fast
+  - macd_slow
+  - macd_signal
+  - profit_taking_threshold
+  - stop_loss_threshold
+  population_size: 50
+  random_trials: 200
+  start_date: '2023-01-01'
+  timeframe: 1h
+paper_trading:
+  max_trades_per_day: 10
+  state_file: day_trading_paper_state.json
+  timeframe: 5m
+  trading_days:
+  - Monday
+  - Tuesday
+  - Wednesday
+  - Thursday
+  - Friday
+  trading_hours:
+    end: '16:00'
+    start: 09:30
+  update_interval: 30
+performance:
+  metrics:
+    avg_trade_duration: true
+    daily_returns: true
+    hourly_returns: true
+    max_drawdown: true
+    profit_factor: true
+    sharpe_ratio: true
+    win_rate: true
+  reporting:
+    frequency: hourly
+    plot_drawdowns: true
+    plot_equity_curve: true
+    plot_win_loss_distribution: true
+    save_to_file: true
+risk:
+  commission: 0.002
+  currency: GBP
+  enable_fractional_shares: true
+  initial_balance: 50.0
+  max_daily_drawdown: 5.0
+  max_daily_loss: 3.0
+  max_open_positions: 5
+  max_risk_per_trade: 0.01
+  risk_per_trade: 0.01
+  risk_reward_ratio: 1.5
+  slippage: 0.001
+  stop_loss:
+    atr_multiplier: 1.5
+    method: atr
+    percent: 0.3
+simulation:
+  commission: 0.002
+  enable_fractional_shares: true
+  slippage: 0.001
+strategy:
+  atr_multiplier: 2.484122646131866
+  atr_period: 14
+  avoid_first_minutes: 15
+  avoid_last_minutes: 15
+  bb_period: 20
+  bb_std_dev: 2.0
+  fast_ma_period: 8
+  ma_type: EMA
+  macd_fast: 12
+  macd_signal: 9
+  macd_slow: 26
+  max_trades_per_day: 10
+  name: intraday_momentum
+  profit_taking_threshold: 0.5
+  risk_reward_ratio: 8.749279639037796
+  rsi_overbought: 70
+  rsi_oversold: 30
+  rsi_period: 14
+  session_end: '16:00'
+  session_start: 09:30
+  slow_ma_period: 21
+  stop_loss_threshold: 0.3
+  trend_ma_period: 50
+  volume_ma_period: 10
