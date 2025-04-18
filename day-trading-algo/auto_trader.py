@@ -46,6 +46,8 @@ total_trades = 0
 winning_trades = 0
 losing_trades = 0
 balance = 50.0
+total_profit_loss = 0.0  # Track total profit/loss from all trades
+closed_trades = []  # Keep track of all closed trades
 
 
 def load_config(config_path: str) -> dict:
@@ -155,7 +157,7 @@ def on_trade_opened(trade_data):
     Args:
         trade_data: Trade data dictionary
     """
-    global ui, active_trades, total_trades, balance
+    global ui, active_trades, total_trades, balance, total_profit_loss
 
     # Generate a unique ID for the trade
     trade_id = str(uuid.uuid4())
@@ -166,8 +168,13 @@ def on_trade_opened(trade_data):
     # Update total trades
     total_trades += 1
 
+    # Calculate cost and update balance
+    position_size = trade_data.get("size", 1.0)
+    entry_price = trade_data.get("entry_price", 0.0)
+    cost = position_size * entry_price
+
     # Update balance
-    balance -= trade_data.get("cost", 0.0)
+    balance -= cost
 
     # Format trade data for UI
     ui_trade = {
@@ -175,9 +182,11 @@ def on_trade_opened(trade_data):
         "symbol": trade_data.get("symbol", ""),
         "direction": trade_data.get("direction", ""),
         "entry_time": trade_data.get("entry_time", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-        "entry_price": trade_data.get("entry_price", 0.0),
-        "current_price": trade_data.get("entry_price", 0.0),
-        "profit_loss": 0.0
+        "entry_price": entry_price,
+        "current_price": entry_price,
+        "profit_loss": 0.0,
+        "size": position_size,
+        "cost": cost
     }
 
     # Send trade to UI
@@ -193,13 +202,14 @@ def on_trade_opened(trade_data):
             "statistics": {
                 "total_trades": total_trades,
                 "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
-                "profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+                "total_profit_loss": total_profit_loss,
+                "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
                 "balance": balance
             }
         })
 
     # Log trade
-    logger.info(f"Trade opened: {ui_trade['direction']} {ui_trade['symbol']} at ${ui_trade['entry_price']:.2f}")
+    logger.info(f"Trade opened: {ui_trade['direction']} {ui_trade['symbol']} at ${ui_trade['entry_price']:.2f}, Size: {position_size}, Cost: ${cost:.2f}, Balance: ${balance:.2f}")
 
 
 def on_trade_closed(trade_data):
@@ -209,7 +219,7 @@ def on_trade_closed(trade_data):
     Args:
         trade_data: Trade data dictionary
     """
-    global ui, active_trades, winning_trades, losing_trades, balance
+    global ui, active_trades, winning_trades, losing_trades, balance, total_profit_loss, closed_trades
 
     # Find the trade in active trades
     trade_id = None
@@ -237,6 +247,9 @@ def on_trade_closed(trade_data):
     else:
         losing_trades += 1
 
+    # Update total profit/loss
+    total_profit_loss += profit_loss
+
     # Format trade data for UI
     ui_trade = {
         "id": trade_id,
@@ -246,8 +259,12 @@ def on_trade_closed(trade_data):
         "exit_time": trade_data.get("exit_time", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
         "entry_price": trade.get("entry_price", 0.0),
         "exit_price": trade_data.get("exit_price", 0.0),
-        "profit_loss": profit_loss
+        "profit_loss": profit_loss,
+        "size": trade_data.get("size", 1.0)
     }
+
+    # Add to closed trades list
+    closed_trades.append(ui_trade)
 
     # Send trade to UI
     if ui:
@@ -262,14 +279,15 @@ def on_trade_closed(trade_data):
             "statistics": {
                 "total_trades": total_trades,
                 "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
-                "profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+                "total_profit_loss": total_profit_loss,  # Use the cumulative profit/loss
+                "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
                 "balance": balance
             }
         })
 
     # Log trade
     result = "WIN" if profit_loss > 0 else "LOSE"
-    logger.info(f"Trade closed: {ui_trade['direction']} {ui_trade['symbol']} at ${ui_trade['exit_price']:.2f}, {result}, P/L: ${profit_loss:.2f}")
+    logger.info(f"Trade closed: {ui_trade['direction']} {ui_trade['symbol']} at ${ui_trade['exit_price']:.2f}, Size: {ui_trade['size']}, {result}, P/L: ${profit_loss:.2f}, Balance: ${balance:.2f}")
 
 
 def on_price_update(symbol, price):
