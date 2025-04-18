@@ -1,0 +1,50 @@
+2025-04-18 20:25:34,147 - swing_trading - INFO - Starting Adaptive ML Model Training
+2025-04-18 20:25:34,148 - swing_trading - INFO - Data provider initialized: YahooFinanceProvider
+2025-04-18 20:25:34,148 - swing_trading - INFO - Retrieving data for F
+2025-04-18 20:25:34,478 - swing_trading - INFO - Retrieved 250 data points for F
+2025-04-18 20:25:34,478 - swing_trading - INFO - Retrieving data for NOK
+2025-04-18 20:25:34,609 - swing_trading - INFO - Retrieved 250 data points for NOK
+2025-04-18 20:25:34,609 - swing_trading - INFO - Retrieving data for PLTR
+2025-04-18 20:25:34,693 - swing_trading - INFO - Retrieved 250 data points for PLTR
+2025-04-18 20:25:34,693 - swing_trading - INFO - Retrieving data for LLOY.L
+2025-04-18 20:25:34,810 - swing_trading - INFO - Retrieved 255 data points for LLOY.L
+2025-04-18 20:25:34,810 - swing_trading - INFO - Retrieving data for RR.L
+2025-04-18 20:25:34,944 - swing_trading - INFO - Retrieved 255 data points for RR.L
+2025-04-18 20:25:34,944 - swing_trading - INFO - Retrieving data for EZJ.L
+2025-04-18 20:25:35,048 - swing_trading - INFO - Retrieved 255 data points for EZJ.L
+2025-04-18 20:25:35,048 - swing_trading - INFO - Retrieving data for BARC.L
+2025-04-18 20:25:35,184 - swing_trading - INFO - Retrieved 255 data points for BARC.L
+2025-04-18 20:25:35,184 - swing_trading - INFO - Retrieving data for BP.L
+2025-04-18 20:25:35,309 - swing_trading - INFO - Retrieved 254 data points for BP.L
+2025-04-18 20:25:35,343 - swing_trading - INFO - Training random_forest model
+2025-04-18 20:25:35,655 - swing_trading - INFO - Model training completed
+2025-04-18 20:25:35,655 - swing_trading - INFO - Accuracy: 1.0000
+2025-04-18 20:25:35,655 - swing_trading - INFO - Precision: 1.0000
+2025-04-18 20:25:35,657 - swing_trading - INFO - Recall: 1.0000
+2025-04-18 20:25:35,657 - swing_trading - INFO - F1 Score: 1.0000
+2025-04-18 20:25:35,657 - swing_trading - INFO - Top features: adx, volume_ratio_5_20, price_to_sma_50, volatility_20d, month, sma_200, return_5d, momentum_5d, sma_ratio_50_200, obv_sma_20
+2025-04-18 20:25:35,658 - swing_trading - INFO - Training results saved to reports\adaptive_ml_training_result_20250418_202535.json
+2025-04-18 20:25:36,006 - swing_trading - INFO - Feature importance plot saved to reports\feature_importance_20250418_202535.png
+2025-04-18 20:25:36,006 - swing_trading - INFO - Simulating trades with adaptive learning for F
+2025-04-18 20:25:36,011 - swing_trading - INFO - Training model on training data
+2025-04-18 20:25:36,042 - swing_trading - INFO - Simulating trades on test data
+2025-04-18 20:25:36,852 - swing_trading - INFO - Buy signal at 2025-02-06 00:00:00-05:00: 8.966961860656738
+2025-04-18 20:25:37,238 - swing_trading - INFO - Sell signal at 2025-02-20 00:00:00-05:00: 9.390000343322754, Profit/Loss: 2.36 (4.72%)
+2025-04-18 20:25:37,303 - swing_trading - INFO - Buy signal at 2025-02-21 00:00:00-05:00: 9.279999732971191
+2025-04-18 20:25:37,375 - swing_trading - INFO - Sell signal at 2025-02-25 00:00:00-05:00: 9.420000076293945, Profit/Loss: 0.79 (1.51%)
+2025-04-18 20:25:37,437 - swing_trading - INFO - Buy signal at 2025-02-26 00:00:00-05:00: 9.470000267028809
+2025-04-18 20:25:37,618 - swing_trading - INFO - Sell signal at 2025-03-05 00:00:00-05:00: 9.649999618530273, Profit/Loss: 1.01 (1.90%)
+2025-04-18 20:25:37,787 - swing_trading - INFO - Buy signal at 2025-03-11 00:00:00-04:00: 9.6899995803833
+2025-04-18 20:25:38,005 - swing_trading - INFO - Sell signal at 2025-03-19 00:00:00-04:00: 10.170000076293945, Profit/Loss: 2.68 (4.95%)
+2025-04-18 20:25:38,502 - swing_trading - INFO - Buy signal at 2025-04-07 00:00:00-04:00: 9.239999771118164
+2025-04-18 20:25:38,580 - swing_trading - INFO - Sell signal at 2025-04-09 00:00:00-04:00: 9.5, Profit/Loss: 1.60 (2.81%)
+2025-04-18 20:25:38,648 - swing_trading - INFO - Buy signal at 2025-04-10 00:00:00-04:00: 9.140000343322754
+2025-04-18 20:25:38,688 - swing_trading - INFO - Sell signal at 2025-04-11 00:00:00-04:00: 9.329999923706055, Profit/Loss: 1.21 (2.08%)
+2025-04-18 20:25:38,883 - swing_trading - INFO - Simulation completed
+2025-04-18 20:25:38,884 - swing_trading - INFO - Total trades: 6
+2025-04-18 20:25:38,884 - swing_trading - INFO - Winning trades: 6 (100.00%)
+2025-04-18 20:25:38,884 - swing_trading - INFO - Losing trades: 0
+2025-04-18 20:25:38,884 - swing_trading - INFO - Profit factor: inf
+2025-04-18 20:25:38,884 - swing_trading - INFO - Final balance: 59.66
+2025-04-18 20:25:38,885 - swing_trading - INFO - Total return: 9.66 (19.31%)
+2025-04-18 20:25:38,886 - swing_trading - INFO - Simulation results saved to reports\adaptive_ml_simulation_F_20250418_202535.json

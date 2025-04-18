@@ -1,0 +1,89 @@
+# Swing Trading Algorithm Configuration Template
+# Copy this file to config.yaml and modify as needed
+
+general:
+  name: "Swing Trading Algorithm"
+  version: "0.1.0"
+  initial_capital: 50.0  # Starting capital in GBP
+  currency: "GBP"
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+data:
+  provider: "alpha_vantage"  # Options: alpha_vantage, yahoo_finance, csv
+  api_key: "YOUR_API_KEY_HERE"
+  symbols:
+    - "AAPL"  # Apple
+    - "MSFT"  # Microsoft
+    - "AMZN"  # Amazon
+    - "GOOGL" # Alphabet
+    - "META"  # Meta Platforms
+  timeframes:
+    - "daily"
+    - "4h"
+    - "1h"
+  cache_dir: "data/cache"
+  history_days: 365  # Days of historical data to retrieve
+
+analysis:
+  indicators:
+    moving_averages:
+      - type: "SMA"  # Simple Moving Average
+        periods: [20, 50, 200]
+      - type: "EMA"  # Exponential Moving Average
+        periods: [9, 21]
+    rsi:
+      period: 14
+      overbought: 70
+      oversold: 30
+    atr:
+      period: 14
+
+strategy:
+  name: "basic_swing"
+  rules:
+    trend_following: true
+    counter_trend: false
+    breakout: true
+    pullback: true
+  entry_confirmation:
+    - "price_above_ma"
+    - "rsi_oversold_bullish"
+    - "volume_increase"
+  exit_rules:
+    - "stop_loss_hit"
+    - "take_profit_hit"
+    - "trend_reversal"
+
+risk:
+  max_risk_per_trade: 0.02  # 2% of account per trade
+  risk_reward_ratio: 2.0  # Minimum reward:risk ratio
+  max_open_positions: 3
+  stop_loss:
+    method: "atr"  # Options: atr, percent, support_resistance
+    atr_multiplier: 2.0
+    percent: 0.05  # 5% from entry price (if method is percent)
+
+simulation:
+  slippage: 0.001  # 0.1% slippage on entries and exits
+  commission: 0.002  # 0.2% commission per trade
+  enable_fractional_shares: true
+
+performance:
+  metrics:
+    - "win_rate"
+    - "profit_factor"
+    - "max_drawdown"
+    - "sharpe_ratio"
+  reporting:
+    frequency: "daily"  # Options: daily, weekly, monthly
+    save_to_file: true
+    plot_equity_curve: true
+
+optimization:
+  enable: false
+  method: "grid_search"  # Options: grid_search, random_search, genetic
+  parameters:
+    - "moving_average_periods"
+    - "rsi_levels"
+    - "atr_multiplier"
+  metric: "sharpe_ratio"  # Metric to optimize for
