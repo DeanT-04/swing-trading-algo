@@ -72,6 +72,27 @@ You can customize various parameters:
 python day_trading_main.py --mode paper --symbols AAPL,MSFT,GOOGL,AMZN,META --timeframe 5m --duration 8.0
 ```
 
+### Automated Trading
+
+To run the automated trading system that starts at market open and trades multiple stocks:
+
+```
+python auto_trader.py
+```
+
+Or simply double-click the `start_auto_trader.bat` file to start the system.
+
+#### Automated Trading Options
+
+- `--start-now`: Start trading immediately instead of waiting for market open
+- `--test-mode`: Run in test mode with simulated market hours
+- `--stock-list`: Path to a file containing the list of stocks to trade
+- `--timeframe`: Trading timeframe (1m, 5m, 15m, 1h)
+
+```
+python auto_trader.py --stock-list config/stock_list.txt --timeframe 5m --start-now
+```
+
 ## Strategy Details
 
 The Intraday Momentum Strategy uses the following indicators and signals:
