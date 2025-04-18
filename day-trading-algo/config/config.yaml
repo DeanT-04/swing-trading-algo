@@ -1,0 +1,752 @@
+# Ultimate Day Trading Algorithm Configuration
+
+general:
+  name: "Ultimate Day Trading Algorithm"
+  version: "1.0.0"
+  initial_capital: 50.0  # Starting capital in GBP
+  currency: "GBP"
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+data:
+  provider: "yahoo_finance"  # Using Yahoo Finance as it doesn't require an API key
+  symbols:
+    # US Large Cap Tech Stocks
+    - "AAPL"    # Apple
+    - "MSFT"    # Microsoft
+    - "GOOGL"   # Alphabet (Google Class A)
+    - "GOOG"    # Alphabet (Google Class C)
+    - "AMZN"    # Amazon
+    - "META"    # Meta Platforms (Facebook)
+    - "TSLA"    # Tesla
+    - "NVDA"    # NVIDIA
+    - "AMD"     # Advanced Micro Devices
+    - "INTC"    # Intel
+    - "NFLX"    # Netflix
+    - "PYPL"    # PayPal
+    - "ADBE"    # Adobe
+    - "CRM"     # Salesforce
+    - "CSCO"    # Cisco
+    - "ORCL"    # Oracle
+    - "IBM"     # IBM
+    - "QCOM"    # Qualcomm
+    - "TXN"     # Texas Instruments
+    - "MU"      # Micron Technology
+    
+    # US Mid Cap Tech Stocks
+    - "UBER"    # Uber
+    - "LYFT"    # Lyft
+    - "SNAP"    # Snap
+    - "PINS"    # Pinterest
+    - "RBLX"    # Roblox
+    - "DASH"    # DoorDash
+    - "ZM"      # Zoom
+    - "TWLO"    # Twilio
+    - "NET"     # Cloudflare
+    - "CRWD"    # CrowdStrike
+    - "OKTA"    # Okta
+    - "DDOG"    # Datadog
+    - "TTD"     # The Trade Desk
+    - "ROKU"    # Roku
+    - "TEAM"    # Atlassian
+    - "ZS"      # Zscaler
+    - "FTNT"    # Fortinet
+    - "PSTG"    # Pure Storage
+    - "DOCN"    # DigitalOcean
+    - "APPS"    # Digital Turbine
+    
+    # US Small Cap Tech Stocks
+    - "PLTR"    # Palantir
+    - "HOOD"    # Robinhood
+    - "RIVN"    # Rivian Automotive
+    - "LCID"    # Lucid Group
+    - "UPST"    # Upstart
+    - "AFRM"    # Affirm
+    - "CFLT"    # Confluent
+    - "GTLB"    # GitLab
+    - "PATH"    # UiPath
+    - "MNDY"    # Monday.com
+    - "SOUN"    # SoundHound
+    - "IONQ"    # IonQ
+    - "ENVX"    # Enovix
+    - "SMCI"    # Super Micro Computer
+    - "MSTR"    # MicroStrategy
+    - "ASTS"    # AST SpaceMobile
+    - "BLZE"    # Backblaze
+    - "COUR"    # Coursera
+    - "FROG"    # JFrog
+    - "STEM"    # Stem
+    
+    # US Financial Stocks
+    - "JPM"     # JPMorgan Chase
+    - "BAC"     # Bank of America
+    - "WFC"     # Wells Fargo
+    - "C"       # Citigroup
+    - "GS"      # Goldman Sachs
+    - "MS"      # Morgan Stanley
+    - "V"       # Visa
+    - "MA"      # Mastercard
+    - "AXP"     # American Express
+    - "BLK"     # BlackRock
+    - "SCHW"    # Charles Schwab
+    - "COF"     # Capital One
+    - "PNC"     # PNC Financial
+    - "USB"     # U.S. Bancorp
+    - "TFC"     # Truist Financial
+    - "SPGI"    # S&P Global
+    - "ICE"     # Intercontinental Exchange
+    - "CME"     # CME Group
+    - "CB"      # Chubb
+    - "PGR"     # Progressive
+    
+    # US Retail & Consumer Stocks
+    - "WMT"     # Walmart
+    - "TGT"     # Target
+    - "COST"    # Costco
+    - "HD"      # Home Depot
+    - "LOW"     # Lowe's
+    - "MCD"     # McDonald's
+    - "SBUX"    # Starbucks
+    - "NKE"     # Nike
+    - "DIS"     # Disney
+    - "ABNB"    # Airbnb
+    - "BKNG"    # Booking Holdings
+    - "EXPE"    # Expedia
+    - "MAR"     # Marriott
+    - "HLT"     # Hilton
+    - "DKNG"    # DraftKings
+    - "CHWY"    # Chewy
+    - "ETSY"    # Etsy
+    - "EBAY"    # eBay
+    - "W"       # Wayfair
+    - "ULTA"    # Ulta Beauty
+    
+    # US Healthcare Stocks
+    - "JNJ"     # Johnson & Johnson
+    - "PFE"     # Pfizer
+    - "MRNA"    # Moderna
+    - "UNH"     # UnitedHealth
+    - "CVS"     # CVS Health
+    - "ABBV"    # AbbVie
+    - "MRK"     # Merck
+    - "BMY"     # Bristol Myers Squibb
+    - "GILD"    # Gilead Sciences
+    - "AMGN"    # Amgen
+    - "LLY"     # Eli Lilly
+    - "ISRG"    # Intuitive Surgical
+    - "REGN"    # Regeneron
+    - "VRTX"    # Vertex
+    - "BIIB"    # Biogen
+    - "ILMN"    # Illumina
+    - "DXCM"    # DexCom
+    - "ALGN"    # Align Technology
+    - "INCY"    # Incyte
+    - "SGEN"    # Seagen
+    
+    # US Energy & Industrial Stocks
+    - "XOM"     # Exxon Mobil
+    - "CVX"     # Chevron
+    - "COP"     # ConocoPhillips
+    - "EOG"     # EOG Resources
+    - "PXD"     # Pioneer Natural Resources
+    - "OXY"     # Occidental Petroleum
+    - "SLB"     # Schlumberger
+    - "HAL"     # Halliburton
+    - "BA"      # Boeing
+    - "GE"      # General Electric
+    - "HON"     # Honeywell
+    - "CAT"     # Caterpillar
+    - "DE"      # Deere & Company
+    - "LMT"     # Lockheed Martin
+    - "RTX"     # Raytheon Technologies
+    - "UPS"     # UPS
+    - "FDX"     # FedEx
+    - "UNP"     # Union Pacific
+    - "CSX"     # CSX Corporation
+    - "NSC"     # Norfolk Southern
+    
+    # UK Stocks
+    - "LLOY.L"  # Lloyds Banking Group
+    - "BARC.L"  # Barclays
+    - "RR.L"    # Rolls-Royce Holdings
+    - "BP.L"    # BP
+    - "SHEL.L"  # Shell
+    - "GSK.L"   # GlaxoSmithKline
+    - "AZN.L"   # AstraZeneca
+    - "HSBA.L"  # HSBC
+    - "VOD.L"   # Vodafone
+    - "BT-A.L"  # BT Group
+    - "ULVR.L"  # Unilever
+    - "TSCO.L"  # Tesco
+    - "SBRY.L"  # Sainsbury's
+    - "STAN.L"  # Standard Chartered
+    - "IAG.L"   # International Airlines Group
+    - "EZJ.L"   # easyJet
+    - "RIO.L"   # Rio Tinto
+    - "AAL.L"   # Anglo American
+    - "GLEN.L"  # Glencore
+    - "LGEN.L"  # Legal & General
+    
+    # Meme & Volatile Stocks
+    - "AMC"     # AMC Entertainment
+    - "GME"     # GameStop
+    - "BBBY"    # Bed Bath & Beyond
+    - "BB"      # BlackBerry
+    - "WISH"    # ContextLogic
+    - "CLOV"    # Clover Health
+    - "SPCE"    # Virgin Galactic
+    - "SOFI"    # SoFi Technologies
+    - "FUBO"    # fuboTV
+    - "SKLZ"    # Skillz
+    
+    # ETFs for Market Indices
+    - "SPY"     # S&P 500 ETF
+    - "QQQ"     # Nasdaq-100 ETF
+    - "DIA"     # Dow Jones Industrial Average ETF
+    - "IWM"     # Russell 2000 ETF
+    - "EFA"     # MSCI EAFE ETF (International Developed Markets)
+    - "EEM"     # MSCI Emerging Markets ETF
+    - "VTI"     # Vanguard Total Stock Market ETF
+    - "VOO"     # Vanguard S&P 500 ETF
+    - "VEA"     # Vanguard FTSE Developed Markets ETF
+    - "VWO"     # Vanguard FTSE Emerging Markets ETF
+    
+    # Sector ETFs
+    - "XLK"     # Technology Sector ETF
+    - "XLF"     # Financial Sector ETF
+    - "XLE"     # Energy Sector ETF
+    - "XLV"     # Healthcare Sector ETF
+    - "XLY"     # Consumer Discretionary Sector ETF
+    - "XLP"     # Consumer Staples Sector ETF
+    - "XLI"     # Industrial Sector ETF
+    - "XLB"     # Materials Sector ETF
+    - "XLU"     # Utilities Sector ETF
+    - "XLRE"    # Real Estate Sector ETF
+    
+    # Commodities & Precious Metals
+    - "GLD"     # Gold ETF
+    - "SLV"     # Silver ETF
+    - "USO"     # Oil ETF
+    - "UNG"     # Natural Gas ETF
+    - "DBC"     # Commodity Index ETF
+    - "PPLT"    # Platinum ETF
+    - "PALL"    # Palladium ETF
+    - "CPER"    # Copper ETF
+    - "WEAT"    # Wheat ETF
+    - "CORN"    # Corn ETF
+    
+    # Volatility & Leveraged ETFs
+    - "VXX"     # Volatility ETF
+    - "UVXY"    # Leveraged Volatility ETF
+    - "SQQQ"    # 3x Inverse Nasdaq-100 ETF
+    - "SPXU"    # 3x Inverse S&P 500 ETF
+    - "TQQQ"    # 3x Leveraged Nasdaq-100 ETF
+    - "UPRO"    # 3x Leveraged S&P 500 ETF
+    - "TZA"     # 3x Inverse Russell 2000 ETF
+    - "TNA"     # 3x Leveraged Russell 2000 ETF
+    - "LABD"    # 3x Inverse Biotech ETF
+    - "LABU"    # 3x Leveraged Biotech ETF
+    
+  timeframes:
+    - "1m"  # 1-minute data for ultra-short-term trading
+    - "5m"  # 5-minute data for short-term trading
+    - "15m" # 15-minute data for medium-term trading
+    - "1h"  # 1-hour data for longer-term trend analysis
+  cache_dir: "data/cache"
+  history_days: 60  # Days of historical data to retrieve for backtesting
+
+analysis:
+  indicators:
+    moving_averages:
+      - type: "SMA"  # Simple Moving Average
+        periods: [9, 20, 50, 200]
+      - type: "EMA"  # Exponential Moving Average
+        periods: [8, 13, 21, 55, 89]
+      - type: "VWAP"  # Volume Weighted Average Price
+        periods: [1]  # Daily VWAP
+    oscillators:
+      rsi:
+        period: 14
+        overbought: 70
+        oversold: 30
+      stochastic:
+        k_period: 14
+        d_period: 3
+        slowing: 3
+      macd:
+        fast_period: 12
+        slow_period: 26
+        signal_period: 9
+      cci:
+        period: 20
+    volatility:
+      atr:
+        period: 14
+      bollinger_bands:
+        period: 20
+        std_dev: 2.0
+      keltner_channels:
+        period: 20
+        atr_multiplier: 2.0
+    volume:
+      volume_ma:
+        period: 20
+      obv: true
+      volume_oscillator:
+        short_period: 5
+        long_period: 10
+      money_flow_index:
+        period: 14
+    support_resistance:
+      pivot_points: true
+      fibonacci_levels: true
+    pattern_recognition:
+      candlestick_patterns: true
+      chart_patterns: true
+
+strategy:
+  name: "advanced_intraday"
+  # Core parameters
+  ma_type: "EMA"  # Options: SMA, EMA
+  fast_ma_period: 8
+  slow_ma_period: 21
+  trend_ma_period: 50
+  rsi_period: 14
+  rsi_overbought: 70
+  rsi_oversold: 30
+  atr_period: 14
+  atr_multiplier: 1.5  # Tighter stops for day trading
+  volume_ma_period: 20
+  risk_reward_ratio: 1.5  # Lower for day trading
+  
+  # Advanced indicators
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  bb_period: 20
+  bb_std_dev: 2.0
+  stoch_k: 14
+  stoch_d: 3
+  stoch_slowing: 3
+  cci_period: 20
+  
+  # Day trading specific parameters
+  session_start: "09:30"  # Market open (EST)
+  session_end: "16:00"    # Market close (EST)
+  avoid_first_minutes: 15  # Avoid trading in first 15 minutes
+  avoid_last_minutes: 15   # Avoid trading in last 15 minutes
+  max_trades_per_day: 20   # Maximum trades per day
+  profit_taking_threshold: 0.5  # Take profits at 0.5% gain
+  stop_loss_threshold: 0.3      # Stop loss at 0.3% loss
+  
+  # Multi-timeframe analysis
+  use_multi_timeframe: true
+  primary_timeframe: "5m"
+  secondary_timeframes: ["15m", "1h"]
+  
+  # Pattern recognition
+  use_candlestick_patterns: true
+  use_chart_patterns: true
+  
+  # Market regime adaptation
+  adapt_to_market_regime: true
+  volatility_adjustment: true
+  
+  # Time-based filters
+  time_filters:
+    avoid_lunch_hour: true  # Avoid trading during lunch hour (12:00-13:00)
+    prefer_morning: true    # Prefer trading in the morning session
+    prefer_power_hour: true # Prefer trading in the last hour (power hour)
+
+risk:
+  max_risk_per_trade: 0.01  # 1% of account per trade
+  max_risk_per_day: 0.05    # 5% of account per day
+  max_open_positions: 5     # Maximum number of open positions
+  max_positions_per_sector: 2  # Maximum positions in the same sector
+  max_correlation: 0.7      # Maximum correlation between positions
+  stop_loss:
+    method: "adaptive"  # Options: fixed, atr, percent, support_resistance, adaptive
+    atr_multiplier: 1.5
+    percent: 0.3   # 0.3% from entry price (if method is percent)
+    trailing: true  # Use trailing stops
+    trailing_activation: 0.5  # Activate trailing stop after 0.5% profit
+  take_profit:
+    method: "adaptive"  # Options: fixed, risk_reward, target, adaptive
+    risk_reward_ratio: 1.5
+    trailing: true
+    partial_exits: true  # Take partial profits at different levels
+    partial_exit_levels: [0.5, 0.8, 1.0]  # Exit 1/3 at each level
+  position_sizing:
+    method: "risk_based"  # Options: fixed, risk_based, kelly, adaptive
+    max_position_size: 0.2  # Maximum 20% of portfolio in one position
+    min_position_size: 0.01  # Minimum 1% of portfolio in one position
+  initial_balance: 50.0
+  currency: "GBP"
+  slippage: 0.001
+  commission: 0.002
+  enable_fractional_shares: true
+  max_daily_drawdown: 5.0   # Maximum daily drawdown percentage
+  max_total_drawdown: 15.0  # Maximum total drawdown percentage
+  circuit_breakers:
+    enable: true
+    consecutive_losses: 3  # Stop trading after 3 consecutive losses
+    daily_loss_threshold: 3.0  # Stop trading if daily loss exceeds 3%
+
+simulation:
+  backtesting:
+    start_date: "2020-01-01"
+    end_date: "2023-12-31"
+    timeframes: ["1m", "5m", "15m", "1h"]
+    use_adjusted_close: true
+    account_currency: "GBP"
+    initial_balance: 50.0
+    slippage: 0.001  # 0.1% slippage on entries and exits
+    commission: 0.002  # 0.2% commission per trade
+    enable_fractional_shares: true
+    data_quality_checks: true
+    realistic_fills: true  # Simulate realistic order fills
+    volume_constraints: true  # Consider volume constraints for order execution
+  monte_carlo:
+    enable: true
+    simulations: 1000
+    confidence_interval: 0.95
+  stress_testing:
+    enable: true
+    scenarios:
+      - name: "market_crash"
+        description: "Simulate a market crash scenario"
+        price_adjustment: -0.2  # 20% price drop
+      - name: "high_volatility"
+        description: "Simulate high volatility scenario"
+        volatility_multiplier: 2.0
+      - name: "liquidity_crisis"
+        description: "Simulate liquidity crisis"
+        slippage_multiplier: 5.0
+        volume_multiplier: 0.2
+  walk_forward:
+    enable: true
+    window_size: 60  # 60 days
+    step_size: 20    # 20 days
+    optimization_window: 40  # 40 days
+    validation_window: 20    # 20 days
+
+performance:
+  metrics:
+    # Return metrics
+    total_return: true
+    annualized_return: true
+    daily_returns: true
+    monthly_returns: true
+    
+    # Risk metrics
+    volatility: true
+    max_drawdown: true
+    avg_drawdown: true
+    drawdown_duration: true
+    
+    # Risk-adjusted metrics
+    sharpe_ratio: true
+    sortino_ratio: true
+    calmar_ratio: true
+    omega_ratio: true
+    
+    # Trade metrics
+    win_rate: true
+    profit_factor: true
+    avg_win: true
+    avg_loss: true
+    largest_win: true
+    largest_loss: true
+    avg_trade_duration: true
+    avg_bars_in_trade: true
+    
+    # Advanced metrics
+    value_at_risk: true
+    expected_shortfall: true
+    ulcer_index: true
+    pain_index: true
+    
+  reporting:
+    frequency: "real-time"  # Options: real-time, hourly, daily, weekly
+    save_to_file: true
+    plot_equity_curve: true
+    plot_drawdowns: true
+    plot_win_loss_distribution: true
+    plot_monthly_returns: true
+    plot_daily_returns: true
+    plot_trade_locations: true
+    plot_position_sizing: true
+    plot_risk_metrics: true
+    
+  benchmarks:
+    - "SPY"  # S&P 500 ETF
+    - "QQQ"  # Nasdaq-100 ETF
+
+optimization:
+  enable: true
+  method: "genetic"  # Options: grid_search, random_search, genetic, bayesian
+  parameters:
+    - "fast_ma_period"
+    - "slow_ma_period"
+    - "rsi_period"
+    - "rsi_oversold"
+    - "rsi_overbought"
+    - "atr_period"
+    - "atr_multiplier"
+    - "volume_ma_period"
+    - "macd_fast"
+    - "macd_slow"
+    - "macd_signal"
+    - "bb_period"
+    - "bb_std_dev"
+    - "profit_taking_threshold"
+    - "stop_loss_threshold"
+  parameter_ranges:
+    fast_ma_period: [5, 15]
+    slow_ma_period: [15, 50]
+    rsi_period: [7, 21]
+    rsi_oversold: [20, 40]
+    rsi_overbought: [60, 80]
+    atr_period: [7, 21]
+    atr_multiplier: [1.0, 3.0]
+    volume_ma_period: [10, 30]
+    macd_fast: [8, 16]
+    macd_slow: [20, 30]
+    macd_signal: [7, 12]
+    bb_period: [10, 30]
+    bb_std_dev: [1.5, 2.5]
+    profit_taking_threshold: [0.3, 1.0]
+    stop_loss_threshold: [0.2, 0.5]
+  metric: "sharpe_ratio"  # Metric to optimize for
+  constraints:
+    - "fast_ma_period < slow_ma_period"
+    - "profit_taking_threshold > stop_loss_threshold"
+  population_size: 100
+  generations: 50
+  mutation_rate: 0.2
+  crossover_rate: 0.7
+  random_trials: 500
+  bayesian_iterations: 100
+  start_date: "2022-01-01"
+  end_date: "2023-12-31"
+  timeframe: "5m"
+  cross_validation: true
+  cv_folds: 5
+  parallel_processing: true
+  num_processes: 8
+
+adaptive_ml:
+  enable: true
+  model_type: "ensemble"  # Options: random_forest, gradient_boosting, neural_network, ensemble
+  ensemble_models:
+    - "random_forest"
+    - "gradient_boosting"
+    - "xgboost"
+    - "lightgbm"
+  test_size: 0.2
+  random_state: 42
+  n_estimators: 500
+  max_depth: 10
+  min_samples_split: 2
+  min_samples_leaf: 1
+  prediction_threshold: 0.6
+  feature_importance_threshold: 0.01
+  learning_rate: 0.05
+  online_learning: true
+  model_path: "models"
+  model_name: "ultimate_day_trading_ml_model"
+  retrain_interval: 5  # Retrain every 5 trades
+  memory_window: 2000  # Remember last 2000 trades
+  
+  # Reinforcement learning
+  reinforcement_learning:
+    enable: true
+    algorithm: "dqn"  # Options: dqn, a2c, ppo
+    reward_function: "sharpe"  # Options: profit, sharpe, sortino, custom
+    state_representation: "features"  # Options: features, raw, ohlcv
+    action_space: "discrete"  # Options: discrete, continuous
+    episodes: 1000
+    gamma: 0.99
+    epsilon_start: 1.0
+    epsilon_end: 0.01
+    epsilon_decay: 0.995
+    replay_buffer_size: 10000
+    batch_size: 64
+    target_update: 10
+    
+  # Features for machine learning
+  features:
+    # Price-based features
+    - "close_pct_change"
+    - "high_low_range"
+    - "close_to_high"
+    - "close_to_low"
+    - "price_relative_to_ma"
+    
+    # Technical indicators
+    - "rsi"
+    - "macd"
+    - "macd_signal"
+    - "macd_hist"
+    - "bb_upper"
+    - "bb_lower"
+    - "bb_width"
+    - "stoch_k"
+    - "stoch_d"
+    - "cci"
+    - "atr"
+    - "atr_percent"
+    
+    # Volume-based features
+    - "volume_relative_to_avg"
+    - "volume_oscillator"
+    - "obv_change"
+    - "money_flow_index"
+    - "vwap_distance"
+    
+    # Trend features
+    - "trend_strength"
+    - "trend_direction"
+    - "price_momentum"
+    
+    # Pattern features
+    - "candlestick_pattern"
+    - "support_resistance_proximity"
+    
+    # Time-based features
+    - "hour_of_day"
+    - "minute_of_hour"
+    - "day_of_week"
+    - "is_market_open"
+    - "time_to_close"
+    - "session_progress"
+    
+    # Market regime features
+    - "market_regime"
+    - "volatility_regime"
+    - "liquidity_regime"
+    
+    # Multi-timeframe features
+    - "higher_tf_trend"
+    - "higher_tf_momentum"
+    - "higher_tf_volume"
+    
+  # Feature engineering
+  feature_engineering:
+    enable: true
+    polynomial_features: true
+    interaction_features: true
+    lag_features: true
+    rolling_statistics: true
+    fourier_features: true
+    
+  # Hyperparameter tuning
+  hyperparameter_tuning:
+    enable: true
+    method: "bayesian"  # Options: grid, random, bayesian
+    cv_folds: 5
+    n_iterations: 50
+    
+  # Model evaluation
+  evaluation:
+    metrics:
+      - "accuracy"
+      - "precision"
+      - "recall"
+      - "f1"
+      - "roc_auc"
+      - "profit_loss"
+    cross_validation: true
+    feature_importance: true
+    confusion_matrix: true
+    learning_curves: true
+
+paper_trading:
+  enable: true
+  update_interval: 10  # Update every 10 seconds
+  state_file: "day_trading_paper_state.json"
+  timeframe: "1m"  # Use 1-minute data for paper trading
+  max_trades_per_day: 20
+  trading_hours:
+    start: "09:30"
+    end: "16:00"
+  trading_days:
+    - "Monday"
+    - "Tuesday"
+    - "Wednesday"
+    - "Thursday"
+    - "Friday"
+  notifications:
+    enable: true
+    channels:
+      - "console"
+      - "file"
+      # - "email"  # Uncomment to enable email notifications
+      # - "sms"    # Uncomment to enable SMS notifications
+    events:
+      - "trade_entry"
+      - "trade_exit"
+      - "stop_loss"
+      - "take_profit"
+      - "error"
+      - "daily_summary"
+  data_streaming:
+    method: "polling"  # Options: polling, websocket
+    websocket_provider: "yahoo_finance"
+    polling_interval: 10  # seconds
+  journaling:
+    enable: true
+    journal_file: "trading_journal.json"
+    screenshot_charts: true
+    record_reasons: true
+    trade_comments: true
+  dashboard:
+    enable: true
+    port: 8050
+    update_interval: 5  # seconds
+    components:
+      - "equity_curve"
+      - "open_positions"
+      - "recent_trades"
+      - "performance_metrics"
+      - "market_overview"
+      - "watchlist"
+      - "alerts"
+  
+  # Learning and adaptation
+  learning:
+    enable: true
+    learn_from_mistakes: true
+    learn_from_successes: true
+    adaptation_speed: 0.1  # How quickly to adapt (0.0-1.0)
+    reward_system:
+      enable: true
+      reward_for_profit: 1.0
+      reward_for_following_trend: 0.5
+      reward_for_good_entry: 0.3
+      reward_for_good_exit: 0.3
+      penalty_for_loss: -1.0
+      penalty_for_bad_entry: -0.3
+      penalty_for_bad_exit: -0.3
+    mistake_recognition:
+      enable: true
+      patterns_to_detect:
+        - "early_entry"
+        - "late_entry"
+        - "early_exit"
+        - "late_exit"
+        - "counter_trend_trade"
+        - "overtrading"
+        - "revenge_trading"
+        - "position_sizing_error"
+    success_recognition:
+      enable: true
+      patterns_to_detect:
+        - "optimal_entry"
+        - "optimal_exit"
+        - "trend_following"
+        - "proper_position_sizing"
+        - "good_risk_management"
+    feedback_loop:
+      enable: true
+      update_frequency: "real-time"  # Options: real-time, hourly, daily
+      parameter_adjustment_rate: 0.05  # How much to adjust parameters (0.0-1.0)
