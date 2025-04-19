@@ -46,7 +46,16 @@ catch {
 # Start the trading algorithm
 try {
     Write-Host "Launching day trading algorithm..." -ForegroundColor Green
-    python auto_trader.py --start-now
+
+    # Check if we should run in headless mode (no UI)
+    $headless = $args -contains "--headless"
+
+    if ($headless) {
+        Write-Host "Running in headless mode (no UI)..." -ForegroundColor Yellow
+        python auto_trader.py --start-now --no-ui
+    } else {
+        python auto_trader.py --start-now
+    }
 }
 catch {
     Write-Host "Error starting trading algorithm: $_" -ForegroundColor Red
