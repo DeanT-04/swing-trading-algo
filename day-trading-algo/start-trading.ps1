@@ -31,6 +31,18 @@ else {
     Write-Host "No virtual environment found. Using system Python." -ForegroundColor Yellow
 }
 
+# Check and install required packages
+Write-Host "Checking and installing required packages..." -ForegroundColor Cyan
+try {
+    python -m pip install -r requirements.txt
+    Write-Host "All required packages installed successfully." -ForegroundColor Green
+}
+catch {
+    Write-Host "Error installing packages: $_" -ForegroundColor Red
+    Write-Host "Press any key to continue anyway..."
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
+
 # Start the trading algorithm
 try {
     Write-Host "Launching day trading algorithm..." -ForegroundColor Green
