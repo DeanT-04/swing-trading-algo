@@ -21,6 +21,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from tqdm import tqdm
 
+import sys
+sys.path.append('.')
+
 from src.data.models import TimeFrame
 from src.data.provider import create_data_provider
 from src.strategy.basic_swing import BasicSwingStrategy
@@ -53,19 +56,17 @@ def create_output_dirs(config):
     reports_dir = Path("reports")
     os.makedirs(reports_dir, exist_ok=True)
 
-    # Create backtest directory
+    # Create backtest directories
     backtest_dir = Path("backtest")
+    backtest_extended_dir = Path("backtest/extended")
     os.makedirs(backtest_dir, exist_ok=True)
-
-    # Create extended backtest directory
-    extended_backtest_dir = Path("extended_backtest")
-    os.makedirs(extended_backtest_dir, exist_ok=True)
+    os.makedirs(backtest_extended_dir, exist_ok=True)
 
     return {
         "logs_dir": logs_dir,
         "reports_dir": reports_dir,
         "backtest_dir": backtest_dir,
-        "extended_backtest_dir": extended_backtest_dir
+        "backtest_extended_dir": backtest_extended_dir
     }
 
 
@@ -511,7 +512,7 @@ def main():
         annual_returns_dict[str(k)] = v
     extended_metrics_json["annual_returns"] = annual_returns_dict
 
-    metrics_file = output_dirs["extended_backtest_dir"] / f"extended_metrics_{timestamp}.json"
+    metrics_file = output_dirs["backtest_extended_dir"] / f"extended_metrics_{timestamp}.json"
 
     with open(metrics_file, 'w') as file:
         json.dump(extended_metrics_json, file, indent=4, default=str)
@@ -519,23 +520,23 @@ def main():
     logger.info(f"Extended metrics saved to {metrics_file}")
 
     # Plot equity curve
-    equity_curve_file = output_dirs["extended_backtest_dir"] / f"equity_curve_{timestamp}.png"
+    equity_curve_file = output_dirs["backtest_extended_dir"] / f"equity_curve_{timestamp}.png"
     plot_equity_curve(extended_metrics["combined_equity_curve"], config["general"]["initial_capital"], equity_curve_file)
     logger.info(f"Equity curve saved to {equity_curve_file}")
 
     # Plot annual returns
-    annual_returns_file = output_dirs["extended_backtest_dir"] / f"annual_returns_{timestamp}.png"
+    annual_returns_file = output_dirs["backtest_extended_dir"] / f"annual_returns_{timestamp}.png"
     plot_annual_returns(extended_metrics["annual_returns"], annual_returns_file)
     logger.info(f"Annual returns plot saved to {annual_returns_file}")
 
     # Plot drawdowns
-    drawdowns_file = output_dirs["extended_backtest_dir"] / f"drawdowns_{timestamp}.png"
+    drawdowns_file = output_dirs["backtest_extended_dir"] / f"drawdowns_{timestamp}.png"
     plot_drawdowns(extended_metrics["drawdowns"], drawdowns_file)
     logger.info(f"Drawdowns plot saved to {drawdowns_file}")
 
     # Plot monthly returns heatmap
     if not extended_metrics["monthly_returns"].empty:
-        monthly_returns_file = output_dirs["extended_backtest_dir"] / f"monthly_returns_{timestamp}.png"
+        monthly_returns_file = output_dirs["backtest_extended_dir"] / f"monthly_returns_{timestamp}.png"
         plot_monthly_returns_heatmap(extended_metrics["monthly_returns"], monthly_returns_file)
         logger.info(f"Monthly returns heatmap saved to {monthly_returns_file}")
 

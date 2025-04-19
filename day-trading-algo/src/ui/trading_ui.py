@@ -257,11 +257,13 @@ class TradingUI:
 
     def _update_time(self):
         """Update the time display."""
-        # Get current time (local time)
-        now = datetime.now()
+        # Get current time in US Eastern Time
+        import pytz
+        eastern = pytz.timezone('US/Eastern')
+        now = datetime.now(eastern)
 
         # Update time display
-        self.time_var.set(now.strftime("%H:%M:%S"))
+        self.time_var.set(now.strftime("%H:%M:%S") + " ET")
 
         # Check if market is open
         is_open = self._is_market_open(now)
@@ -274,10 +276,10 @@ class TradingUI:
 
     def _is_market_open(self, now: datetime) -> bool:
         """
-        Check if the US stock market is currently open.
+        Check if the market is currently open based on US Eastern Time.
 
         Args:
-            now: Current datetime
+            now: Current datetime in US Eastern Time
 
         Returns:
             bool: True if market is open, False otherwise
@@ -286,9 +288,7 @@ class TradingUI:
         if now.weekday() >= 5:  # 5 = Saturday, 6 = Sunday
             return False
 
-        # For simplicity, we'll use a fixed schedule in local time
-        # Adjust these hours based on your local time zone relative to US Eastern Time
-        # This is a simplified approach - for production, use proper timezone conversion
+        # Use US market hours (9:30 AM to 4:00 PM Eastern Time)
         market_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=16, minute=0, second=0, microsecond=0)
 

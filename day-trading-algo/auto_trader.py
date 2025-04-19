@@ -32,8 +32,10 @@ from src.utils.logging_utils import setup_logging
 from src.data.models import TimeFrame
 from src.simulation.paper_trader import PaperTrader
 from src.strategy.intraday_strategy import IntradayStrategy
+from src.strategy.multi_timeframe_strategy import MultiTimeframeStrategy
 from src.data.provider import YahooFinanceProvider
 from src.ui.trading_ui import TradingUI
+from src.ui.console_ui import ConsoleUI, setup_console_formatter
 from src.risk.risk_manager import RiskManager
 
 
@@ -113,7 +115,7 @@ def is_market_open() -> bool:
     Returns:
         bool: True if market is open, False otherwise
     """
-    # Get current time in Eastern Time (US market time)
+    # Get current time in US Eastern Time
     eastern = pytz.timezone('US/Eastern')
     now = datetime.now(eastern)
 
@@ -121,7 +123,7 @@ def is_market_open() -> bool:
     if now.weekday() >= 5:  # 5 = Saturday, 6 = Sunday
         return False
 
-    # Check if it's between 9:30 AM and 4:00 PM Eastern
+    # Check if it's between 9:30 AM and 4:00 PM Eastern Time
     market_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
     market_close = now.replace(hour=16, minute=0, second=0, microsecond=0)
 
@@ -398,7 +400,7 @@ def on_price_update(symbol, price):
                 ui.update_active_trade(trade_id, price, profit_loss)
 
 
-def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
+def start_trading(config: dict, symbols: list, timeframe: TimeFrame, test_mode: bool = False, strategy_type: str = "intraday"):
     """
     Start the day trading algorithm.
 
@@ -406,10 +408,13 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
         config: Configuration dictionary
         symbols: List of symbols to trade
         timeframe: Timeframe to use
+        test_mode: Whether to run in test mode (ignoring market hours)
     """
     global paper_trader, ui, risk_manager, balance
 
     logger.info(f"Starting day trading algorithm with {len(symbols)} symbols")
+    if test_mode:
+        logger.info("Running in test mode - ignoring market hours")
 
     # Update UI status
     if ui:
@@ -423,6 +428,13 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
             "level": "INFO",
             "message": f"Starting day trading algorithm with {len(symbols)} symbols"
         })
+
+        if test_mode:
+            ui.add_message({
+                "type": "log",
+                "level": "INFO",
+                "message": "Running in test mode - ignoring market hours"
+            })
 
     # Initialize risk manager
     risk_config = config.get("risk", {})
@@ -445,10 +457,26 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
     # Initialize data provider
     data_provider = YahooFinanceProvider(config)
 
-    # Initialize strategy
-    strategy = IntradayStrategy(config)
+    # Initialize strategy based on strategy_type
+    if strategy_type == "multi_timeframe":
+        strategy = MultiTimeframeStrategy(config)
+        logger.info("Using Multi-Timeframe Strategy")
+    else:
+        strategy = IntradayStrategy(config)
+        logger.info("Using Intraday Strategy")
 
     # Initialize paper trader with callbacks
+
+    # Enable console UI if running in console mode
+    if not ui:
+        # Set up console formatter for better logging
+        setup_console_formatter()
+
+        # Enable console UI in paper trader
+        paper_config = config.get("paper_trading", {})
+        paper_config["use_console_ui"] = True
+        config["paper_trading"] = paper_config
+
     paper_trader = PaperTrader(config)
     paper_trader.set_callbacks({
         "on_trade_opened": on_trade_opened,
@@ -464,7 +492,8 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
             strategy=strategy,
             data_provider=data_provider,
             duration_hours=6.5,  # Standard market hours duration
-            risk_manager=risk_manager  # Pass risk manager to paper trader
+            risk_manager=risk_manager,  # Pass risk manager to paper trader
+            test_mode=test_mode  # Pass test mode flag
         )
     except Exception as e:
         logger.error(f"Error in paper trading: {e}")
@@ -534,7 +563,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 
-def schedule_trading(config: dict, symbols: list, timeframe: TimeFrame):
+def schedule_trading(config: dict, symbols: list, timeframe: TimeFrame, strategy_type: str = "intraday"):
     """
     Schedule trading to start at market open and stop at market close.
 
@@ -543,15 +572,39 @@ def schedule_trading(config: dict, symbols: list, timeframe: TimeFrame):
         symbols: List of symbols to trade
         timeframe: Timeframe to use
     """
-    # Schedule trading to start at market open (9:30 AM Eastern)
-    schedule.every().day.at("09:30").do(
-        lambda: start_trading(config, symbols, timeframe)
+    # Get current time in Eastern Time to determine if we're in EDT or EST
+    eastern = pytz.timezone('US/Eastern')
+    now = datetime.now(eastern)
+
+    # Convert Eastern market hours to local time for scheduling
+    # Market opens at 9:30 AM ET and closes at 4:00 PM ET
+    local_tz = datetime.now().astimezone().tzinfo
+
+    # Create a datetime for today at 9:30 AM ET
+    market_open_et = eastern.localize(datetime.now().replace(
+        hour=9, minute=30, second=0, microsecond=0))
+    # Convert to local time
+    market_open_local = market_open_et.astimezone(local_tz)
+
+    # Create a datetime for today at 4:00 PM ET
+    market_close_et = eastern.localize(datetime.now().replace(
+        hour=16, minute=0, second=0, microsecond=0))
+    # Convert to local time
+    market_close_local = market_close_et.astimezone(local_tz)
+
+    # Format times for scheduling
+    open_time = market_open_local.strftime("%H:%M")
+    close_time = market_close_local.strftime("%H:%M")
+
+    # Schedule trading to start at market open (9:30 AM Eastern Time, converted to local time)
+    schedule.every().day.at(open_time).do(
+        lambda: start_trading(config, symbols, timeframe, test_mode=False, strategy_type=strategy_type)
     ).tag("trading")
 
-    # Schedule trading to stop at market close (4:00 PM Eastern)
-    schedule.every().day.at("16:00").do(stop_trading).tag("trading")
+    # Schedule trading to stop at market close (4:00 PM Eastern Time, converted to local time)
+    schedule.every().day.at(close_time).do(stop_trading).tag("trading")
 
-    logger.info("Trading scheduled to start at 9:30 AM and stop at 4:00 PM Eastern time")
+    logger.info(f"Trading scheduled to start at 9:30 AM and stop at 4:00 PM Eastern Time (local times: {open_time} - {close_time})")
 
 
 def generate_daily_report():
@@ -646,6 +699,8 @@ def main():
                         help="Path to stock list file")
     parser.add_argument("--timeframe", choices=["1m", "5m", "15m", "1h"], default="5m",
                         help="Timeframe to use")
+    parser.add_argument("--strategy", choices=["intraday", "multi_timeframe"], default="intraday",
+                        help="Strategy type to use")
     parser.add_argument("--start-now", action="store_true",
                         help="Start trading immediately instead of waiting for market open")
     parser.add_argument("--test-mode", action="store_true",
@@ -680,8 +735,22 @@ def main():
     # Create reports directory if it doesn't exist
     os.makedirs("reports", exist_ok=True)
 
-    # Schedule daily report generation at 4:15 PM Eastern
-    schedule.every().day.at("16:15").do(generate_daily_report).tag("reporting")
+    # Get Eastern Time market close + 15 minutes in local time
+    eastern = pytz.timezone('US/Eastern')
+    local_tz = datetime.now().astimezone().tzinfo
+
+    # Create a datetime for today at 4:15 PM ET (15 minutes after market close)
+    report_time_et = eastern.localize(datetime.now().replace(
+        hour=16, minute=15, second=0, microsecond=0))
+    # Convert to local time
+    report_time_local = report_time_et.astimezone(local_tz)
+
+    # Format time for scheduling
+    report_time = report_time_local.strftime("%H:%M")
+
+    # Schedule daily report generation at 4:15 PM Eastern Time (converted to local time)
+    schedule.every().day.at(report_time).do(generate_daily_report).tag("reporting")
+    logger.info(f"Daily report generation scheduled for 4:15 PM Eastern Time (local time: {report_time})")
 
     # Initialize UI
     if not args.no_ui:
@@ -716,20 +785,20 @@ def main():
     if args.test_mode:
         logger.info("Running in test mode with simulated market hours")
         # Start trading immediately in test mode
-        start_trading(config, symbols, timeframe)
+        start_trading(config, symbols, timeframe, test_mode=True, strategy_type=args.strategy)
     else:
         # Schedule trading
-        schedule_trading(config, symbols, timeframe)
+        schedule_trading(config, symbols, timeframe, args.strategy)
 
         # Start trading immediately if requested
         if args.start_now:
             logger.info("Starting trading immediately")
-            start_trading(config, symbols, timeframe)
+            start_trading(config, symbols, timeframe, test_mode=False, strategy_type=args.strategy)
         else:
             # Check if market is open
             if is_market_open():
                 logger.info("Market is open, starting trading")
-                start_trading(config, symbols, timeframe)
+                start_trading(config, symbols, timeframe, test_mode=False, strategy_type=args.strategy)
             else:
                 next_open = get_next_market_open()
                 logger.info(f"Market is closed, next open at {next_open.strftime('%Y-%m-%d %H:%M:%S %Z')}")
@@ -753,7 +822,9 @@ def main():
         })
         ui.run()
     else:
-        # No UI, run in console mode
+        # No UI, run in console mode with enhanced console output
+        logger.info("Running in console mode with enhanced console output")
+
         while running:
             # Run scheduled tasks
             schedule.run_pending()

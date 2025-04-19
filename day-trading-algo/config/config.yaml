@@ -31,7 +31,7 @@ data:
     - "TXN"     # Texas Instruments
     - "MU"      # Micron Technology
     - "UBER"    # Uber
-    
+
     # US Financial Stocks
     - "JPM"     # JPMorgan Chase
     - "BAC"     # Bank of America
@@ -43,7 +43,7 @@ data:
     - "MA"      # Mastercard
     - "AXP"     # American Express
     - "BLK"     # BlackRock
-    
+
     # US Retail & Consumer Stocks
     - "WMT"     # Walmart
     - "TGT"     # Target
@@ -55,7 +55,7 @@ data:
     - "NKE"     # Nike
     - "DIS"     # Disney
     - "ABNB"    # Airbnb
-    
+
     # US Healthcare Stocks
     - "JNJ"     # Johnson & Johnson
     - "PFE"     # Pfizer
@@ -67,7 +67,7 @@ data:
     - "BMY"     # Bristol Myers Squibb
     - "GILD"    # Gilead Sciences
     - "AMGN"    # Amgen
-    
+
     # UK Stocks
     - "LLOY.L"  # Lloyds Banking Group
     - "BARC.L"  # Barclays
@@ -79,7 +79,7 @@ data:
     - "HSBA.L"  # HSBC
     - "VOD.L"   # Vodafone
     - "BT-A.L"  # BT Group
-    
+
     # Small Cap & Volatile Stocks
     - "AMC"     # AMC Entertainment
     - "GME"     # GameStop
@@ -91,14 +91,14 @@ data:
     - "PINS"    # Pinterest
     - "RBLX"    # Roblox
     - "DKNG"    # DraftKings
-    
+
     # ETFs for Market Indices
     - "SPY"     # S&P 500 ETF
     - "QQQ"     # Nasdaq-100 ETF
     - "DIA"     # Dow Jones Industrial Average ETF
     - "IWM"     # Russell 2000 ETF
     - "EFA"     # MSCI EAFE ETF (International Developed Markets)
-    
+
     # Sector ETFs
     - "XLK"     # Technology Sector ETF
     - "XLF"     # Financial Sector ETF
@@ -110,25 +110,26 @@ data:
     - "XLB"     # Materials Sector ETF
     - "XLU"     # Utilities Sector ETF
     - "XLRE"    # Real Estate Sector ETF
-    
+
     # Commodities & Precious Metals
     - "GLD"     # Gold ETF
     - "SLV"     # Silver ETF
     - "USO"     # Oil ETF
     - "UNG"     # Natural Gas ETF
     - "DBC"     # Commodity Index ETF
-    
+
     # Volatility & Inverse ETFs
     - "VXX"     # Volatility ETF
     - "UVXY"    # Leveraged Volatility ETF
     - "SQQQ"    # 3x Inverse Nasdaq-100 ETF
     - "SPXU"    # 3x Inverse S&P 500 ETF
     - "TQQQ"    # 3x Leveraged Nasdaq-100 ETF
-    
+
   timeframes:
     - "1h"
     - "15m"
     - "5m"
+    - "1m"
   cache_dir: "data/cache"
   history_days: 30  # Days of historical data to retrieve
 
@@ -174,7 +175,7 @@ strategy:
   macd_signal: 9
   bb_period: 20
   bb_std_dev: 2.0
-  
+
   # Day trading specific parameters
   session_start: "09:30"  # Market open (EST)
   session_end: "16:00"    # Market close (EST)
@@ -183,6 +184,10 @@ strategy:
   max_trades_per_day: 10   # Maximum trades per day
   profit_taking_threshold: 0.5  # Take profits at 0.5% gain
   stop_loss_threshold: 0.3      # Stop loss at 0.3% loss
+
+  # ML integration
+  use_ml: true
+  ml_confidence_threshold: 0.7
 
 risk:
   max_risk_per_trade: 0.01  # 1% of account per trade (more conservative for day trading)
@@ -265,7 +270,19 @@ adaptive_ml:
   model_name: "day_trading_ml_model"
   retrain_interval: 5
   memory_window: 1000
-  
+
+  # Multi-timeframe ML settings
+  multi_timeframe:
+    enabled: true
+    model_name: "multi_timeframe_ml_model"
+    timeframes:
+      - "1h"
+      - "15m"
+      - "5m"
+      - "1m"
+    feature_alignment: "forward_fill"  # How to align features from different timeframes
+    prediction_timeframe: "1m"  # Primary timeframe for predictions
+
   # Features specific to day trading
   features:
     - "rsi"

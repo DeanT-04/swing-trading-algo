@@ -34,6 +34,18 @@ adaptive_ml:
   random_state: 42
   retrain_interval: 5
   test_size: 0.2
+
+  # Multi-timeframe ML settings
+  multi_timeframe:
+    enabled: true
+    model_name: multi_timeframe_ml_model
+    timeframes:
+    - 1h
+    - 15m
+    - 5m
+    - 1m
+    feature_alignment: forward_fill
+    prediction_timeframe: 1m
 analysis:
   indicators:
     atr:
@@ -167,6 +179,7 @@ data:
   - 1h
   - 15m
   - 5m
+  - 1m
 general:
   currency: GBP
   initial_capital: 50.0
@@ -302,3 +315,7 @@ strategy:
   stop_loss_threshold: 0.3
   trend_ma_period: 50
   volume_ma_period: 10
+
+  # ML integration
+  use_ml: true
+  ml_confidence_threshold: 0.7

@@ -1,3 +1,0 @@
-@echo off
-echo Starting Day Trading Algorithm...
-powershell -ExecutionPolicy Bypass -File "%~dp0start-trading.ps1"

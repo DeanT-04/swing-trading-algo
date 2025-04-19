@@ -30,10 +30,25 @@ if (!$functionExists) {
 
     $functionDefinition = @"
 
-# Day Trading Algorithm shortcut
+# Day Trading Algorithm shortcuts
 function Start-DayTrading {
-    # Navigate to the script directory and run it
-    & "C:\Users\deana\Documents\Coding projects\trading-algo\swing-trading-algo\day-trading-algo\start-trading.ps1"
+    # Navigate to the script directory and run it with UI
+    & "C:\Users\deana\Documents\Coding projects\trading-algo\swing-trading-algo\day-trading-algo\start-trading.ps1" $args
+}
+
+function Start-DayTradingHeadless {
+    # Navigate to the script directory and run it without UI (headless mode)
+    & "C:\Users\deana\Documents\Coding projects\trading-algo\swing-trading-algo\day-trading-algo\start-trading.ps1" --headless
+}
+
+function Start-DayTradingTest {
+    # Navigate to the script directory and run it in test mode (simulated market hours)
+    & "C:\Users\deana\Documents\Coding projects\trading-algo\swing-trading-algo\day-trading-algo\start-trading.ps1" --test-mode
+}
+
+function Start-DayTradingTestHeadless {
+    # Navigate to the script directory and run it in test mode without UI
+    & "C:\Users\deana\Documents\Coding projects\trading-algo\swing-trading-algo\day-trading-algo\start-trading.ps1" --test-mode --headless
 }
 "@
 

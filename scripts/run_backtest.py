@@ -19,6 +19,9 @@ import pandas as pd
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import sys
+sys.path.append('.')
+
 from src.data.models import TimeFrame
 from src.data.provider import create_data_provider
 from src.strategy.basic_swing import BasicSwingStrategy
@@ -51,14 +54,17 @@ def create_output_dirs(config):
     reports_dir = Path("reports")
     os.makedirs(reports_dir, exist_ok=True)
 
-    # Create backtest directory
+    # Create backtest directories
     backtest_dir = Path("backtest")
+    backtest_results_dir = Path("backtest/results")
     os.makedirs(backtest_dir, exist_ok=True)
+    os.makedirs(backtest_results_dir, exist_ok=True)
 
     return {
         "logs_dir": logs_dir,
         "reports_dir": reports_dir,
-        "backtest_dir": backtest_dir
+        "backtest_dir": backtest_dir,
+        "backtest_results_dir": backtest_results_dir
     }
 
 
@@ -195,7 +201,7 @@ def main():
 
     # Save backtest results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    result_file = output_dirs["backtest_dir"] / f"backtest_result_{timestamp}.json"
+    result_file = output_dirs["backtest_results_dir"] / f"backtest_result_{timestamp}.json"
 
     # Convert equity curve to list of dictionaries for JSON serialization
     equity_curve_list = result["equity_curve"].to_dict(orient="records")
@@ -207,7 +213,7 @@ def main():
     logger.info(f"Backtest results saved to {result_file}")
 
     # Plot equity curve
-    equity_curve_file = output_dirs["backtest_dir"] / f"equity_curve_{timestamp}.png"
+    equity_curve_file = output_dirs["backtest_results_dir"] / f"equity_curve_{timestamp}.png"
     plot_equity_curve(result["equity_curve"], result["initial_balance"], equity_curve_file)
 
     logger.info(f"Equity curve saved to {equity_curve_file}")

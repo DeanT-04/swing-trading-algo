@@ -22,6 +22,7 @@ from src.data.models import Stock, TimeFrame, TradeDirection, Trade, Position
 from src.data.provider import YahooFinanceProvider
 from src.strategy.intraday_strategy import IntradayStrategy
 from src.risk.position_sizing import calculate_position_size
+from src.ui.console_ui import ConsoleUI
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -92,6 +93,21 @@ class PaperTrader:
             "on_price_update": None
         }
 
+        # Initialize console UI
+        self.console_ui = None
+        self.use_console_ui = self.paper_config.get("use_console_ui", True)
+
+        if self.use_console_ui:
+            try:
+                self.console_ui = ConsoleUI({
+                    "update_interval": 1,
+                    "initial_balance": self.initial_balance
+                })
+                self.console_ui.start()
+            except Exception as e:
+                logger.error(f"Error initializing console UI: {e}")
+                self.console_ui = None
+
         logger.info(f"Initialized paper trading system with {self.initial_balance} {self.currency}")
 
     def set_callbacks(self, callbacks: Dict):
@@ -109,7 +125,7 @@ class PaperTrader:
                 logger.warning(f"Unknown callback type: {key}")
 
     def run(self, symbols: List[str], timeframe: TimeFrame, strategy=None, data_provider=None,
-            duration_hours: float = 6.5, risk_manager=None):
+            duration_hours: float = 6.5, risk_manager=None, test_mode: bool = False):
         """
         Run the paper trading system with the specified parameters.
 
@@ -120,8 +136,14 @@ class PaperTrader:
             data_provider: Data provider to use (optional, uses the one from constructor if not provided)
             duration_hours: Duration in hours to run the simulation
             risk_manager: Risk manager to use (optional)
+            test_mode: Whether to run in test mode (ignoring market hours)
         """
         logger.info(f"Running paper trading for {len(symbols)} symbols with {timeframe} timeframe")
+
+        # Set test mode flag
+        self.test_mode = test_mode
+        if test_mode:
+            logger.info("Running in test mode - ignoring market hours")
 
         # Override strategy and data provider if provided
         if strategy:
@@ -141,6 +163,10 @@ class PaperTrader:
         """
         logger.info("Stopping paper trading system")
         self.running = False
+
+        # Stop console UI if it's running
+        if self.console_ui:
+            self.console_ui.stop()
 
     def start(self, symbols: List[str], timeframe: TimeFrame, duration_hours: float = 6.5):
         """Start the paper trading system."""
@@ -228,6 +254,10 @@ class PaperTrader:
                 if self._is_trading_time():
                     logger.info("Fetching real-time data...")
 
+                    # Update console UI with algorithm status
+                    if self.console_ui:
+                        self.console_ui.update_data("status", {"status": "ONLINE"})
+
                     for symbol in symbols:
                         # Fetch data for the symbol
                         stock = self.data_provider.get_stock_data(symbol, [timeframe])
@@ -242,10 +272,22 @@ class PaperTrader:
                                 if latest_data:
                                     latest_price = latest_data[-1].close
                                     self.callbacks["on_price_update"](symbol, latest_price)
+
+                                    # Update any active trades with the latest price
+                                    active_trades = self.console_ui.active_trades if self.console_ui else {}
+                                    for trade_id, trade in active_trades.items():
+                                        if trade.get("symbol") == symbol:
+                                            trade["current_price"] = latest_price
+                                            profit_loss = self._calculate_profit_loss(trade)
+                                            trade["profit_loss"] = profit_loss
                         else:
                             logger.warning(f"No data available for {symbol}")
                 else:
                     logger.info("Outside trading hours. Waiting...")
+
+                    # Update console UI with algorithm status
+                    if self.console_ui:
+                        self.console_ui.update_data("status", {"status": "WAITING"})
 
                 # Sleep for the update interval
                 time.sleep(update_interval)
@@ -320,8 +362,18 @@ class PaperTrader:
                     if isinstance(signal_time, str):
                         signal_time = pd.to_datetime(signal_time)
 
-                    now = datetime.now()
-                    if now - signal_time > timedelta(minutes=5):
+                    # Make sure both times are timezone-aware or timezone-naive
+                    import pytz
+                    london = pytz.timezone('Europe/London')
+                    now = datetime.now(london)
+
+                    # Convert signal_time to timezone-aware if it's naive
+                    if signal_time.tzinfo is None:
+                        signal_time = london.localize(signal_time)
+
+                    # Calculate time difference
+                    time_diff = now - signal_time
+                    if time_diff > timedelta(minutes=5):
                         logger.info(f"Signal for {stock.symbol} is too old ({signal_time}). Skipping.")
                         continue
 
@@ -345,7 +397,7 @@ class PaperTrader:
                         stop_loss=signal["stop_loss"],
                         take_profit=signal["take_profit"],
                         size=position_size,
-                        entry_time=now,
+                        entry_time=now.replace(tzinfo=None),  # Remove timezone info to avoid issues
                         status="open"
                     )
 
@@ -357,7 +409,7 @@ class PaperTrader:
                         symbol=stock.symbol,
                         direction=signal["direction"],
                         entry_price=signal["entry_price"],
-                        entry_time=now,
+                        entry_time=now.replace(tzinfo=None),  # Remove timezone info to avoid issues
                         size=position_size,
                         stop_loss=signal["stop_loss"],
                         take_profit=signal["take_profit"],
@@ -374,20 +426,37 @@ class PaperTrader:
                     # Increment the daily trade counter
                     self.current_day_trades += 1
 
+                    # Create trade data dictionary
+                    trade_data = {
+                        "id": f"trade_{len(self.trades)}",
+                        "symbol": stock.symbol,
+                        "direction": signal["direction"].name,
+                        "entry_price": signal["entry_price"],
+                        "current_price": signal["entry_price"],  # Initially the same as entry price
+                        "entry_time": now.strftime("%Y-%m-%d %H:%M:%S"),
+                        "size": position_size,
+                        "stop_loss": signal["stop_loss"],
+                        "take_profit": signal["take_profit"],
+                        "cost": position_size * signal["entry_price"],
+                        "profit_loss": 0.0  # Initially zero
+                    }
+
                     # Call the on_trade_opened callback if set
                     if self.callbacks["on_trade_opened"]:
-                        trade_data = {
-                            "id": f"trade_{len(self.trades)}",
-                            "symbol": stock.symbol,
-                            "direction": signal["direction"].name,
-                            "entry_price": signal["entry_price"],
-                            "entry_time": now.strftime("%Y-%m-%d %H:%M:%S"),
-                            "size": position_size,
-                            "stop_loss": signal["stop_loss"],
-                            "take_profit": signal["take_profit"],
-                            "cost": position_size * signal["entry_price"]
-                        }
                         self.callbacks["on_trade_opened"](trade_data)
+
+                    # Update console UI
+                    if self.console_ui:
+                        self.console_ui.update_data("trade_opened", {"trade": trade_data})
+
+                        # Update statistics
+                        self.console_ui.update_data("statistics", {
+                            "statistics": {
+                                "balance": self.account_balance,
+                                "total_trades": len(self.trades),
+                                "win_rate": self._calculate_win_rate()
+                            }
+                        })
 
                     logger.info(f"Opened {signal['direction'].name} position for {stock.symbol} at {signal['entry_price']}")
                     logger.info(f"Position size: {position_size}, Stop loss: {signal['stop_loss']}, Take profit: {signal['take_profit']}")
@@ -453,9 +522,14 @@ class PaperTrader:
         # Update account balance
         self.account_balance += profit_loss
 
+        # Get current time in US Eastern Time
+        import pytz
+        eastern = pytz.timezone('US/Eastern')
+        now = datetime.now(eastern)
+
         # Update position
         position.exit_price = exit_price
-        position.exit_time = datetime.now()
+        position.exit_time = now
         position.profit_loss = profit_loss
         position.status = "closed"
 
@@ -478,20 +552,47 @@ class PaperTrader:
         logger.info(f"Profit/Loss: {profit_loss:.2f} ({reason})")
         logger.info(f"New account balance: {self.account_balance:.2f}")
 
+        # Create trade data dictionary
+        trade_data = {
+            "id": f"trade_{len([t for t in self.trades if t.status == 'closed'])}",
+            "symbol": position.symbol,
+            "direction": position.direction.name,
+            "entry_price": position.entry_price,
+            "exit_price": exit_price,
+            "entry_time": position.entry_time.strftime("%Y-%m-%d %H:%M:%S") if position.entry_time else "",
+            "exit_time": position.exit_time.strftime("%Y-%m-%d %H:%M:%S") if position.exit_time else "",
+            "size": position.size,
+            "profit_loss": profit_loss,
+            "exit_reason": reason
+        }
+
         # Call the on_trade_closed callback if set
         if self.callbacks["on_trade_closed"]:
-            trade_data = {
-                "symbol": position.symbol,
-                "direction": position.direction.name,
-                "entry_price": position.entry_price,
-                "exit_price": exit_price,
-                "entry_time": position.entry_time.strftime("%Y-%m-%d %H:%M:%S") if position.entry_time else "",
-                "exit_time": position.exit_time.strftime("%Y-%m-%d %H:%M:%S") if position.exit_time else "",
-                "size": position.size,
-                "profit_loss": profit_loss,
-                "exit_reason": reason
-            }
             self.callbacks["on_trade_closed"](trade_data)
+
+        # Update console UI
+        if self.console_ui:
+            # Find the trade ID in active trades
+            trade_id = None
+            for tid, trade in self.console_ui.active_trades.items():
+                if (trade.get("symbol") == position.symbol and
+                    trade.get("direction") == position.direction.name and
+                    trade.get("entry_time") == position.entry_time.strftime("%Y-%m-%d %H:%M:%S") if position.entry_time else ""):
+                    trade_id = tid
+                    break
+
+            if trade_id:
+                trade_data["id"] = trade_id
+                self.console_ui.update_data("trade_closed", {"trade": trade_data})
+
+                # Update statistics
+                self.console_ui.update_data("statistics", {
+                    "statistics": {
+                        "balance": self.account_balance,
+                        "total_trades": len(self.trades),
+                        "win_rate": self._calculate_win_rate()
+                    }
+                })
 
         # Save trade details to CSV file
         self._log_trade_to_csv(position, exit_price, profit_loss, reason)
@@ -503,7 +604,14 @@ class PaperTrader:
         Returns:
             bool: True if current time is within trading hours, False otherwise
         """
-        now = datetime.now()
+        # Check if test mode is enabled
+        if hasattr(self, 'test_mode') and self.test_mode:
+            return True
+
+        # Get current time in US Eastern Time
+        import pytz
+        eastern = pytz.timezone('US/Eastern')
+        now = datetime.now(eastern)
 
         # Check if today is a trading day
         day_of_week = now.strftime("%A")
@@ -523,7 +631,10 @@ class PaperTrader:
 
     def _reset_daily_counters(self):
         """Reset daily counters at the start of a new trading day."""
-        now = datetime.now()
+        # Get current time in US Eastern Time
+        import pytz
+        eastern = pytz.timezone('US/Eastern')
+        now = datetime.now(eastern)
         day_of_week = now.strftime("%A")
 
         # Only reset if it's a trading day and before market open
@@ -537,8 +648,13 @@ class PaperTrader:
 
     def save_state(self):
         """Save the current state of the paper trading system."""
+        # Get current time in US Eastern Time
+        import pytz
+        eastern = pytz.timezone('US/Eastern')
+        now = datetime.now(eastern)
+
         state = {
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": now.isoformat(),
             "account_balance": self.account_balance,
             "positions": [pos.to_dict() for pos in self.positions],
             "trades": [trade.to_dict() for trade in self.trades],
@@ -639,6 +755,27 @@ class PaperTrader:
 
         logger.info(f"Trade details logged to {csv_file}")
 
+    def _calculate_win_rate(self) -> float:
+        """Calculate the win rate for closed trades."""
+        closed_trades = [t for t in self.trades if t.status == "closed"]
+        winning_trades = [t for t in closed_trades if t.profit_loss and t.profit_loss > 0]
+
+        return len(winning_trades) / len(closed_trades) * 100 if closed_trades else 0
+
+    def _calculate_profit_loss(self, trade: Dict) -> float:
+        """Calculate profit/loss for a trade based on current price."""
+        direction = trade.get("direction")
+        entry_price = trade.get("entry_price", 0.0)
+        current_price = trade.get("current_price", entry_price)
+        size = trade.get("size", 0.0)
+
+        if direction == "LONG":
+            return (current_price - entry_price) * size
+        elif direction == "SHORT":
+            return (entry_price - current_price) * size
+        else:
+            return 0.0
+
     def _generate_performance_report(self):
         """Generate a performance report for the paper trading session."""
         if not self.trades:
@@ -651,7 +788,7 @@ class PaperTrader:
         winning_trades = [t for t in closed_trades if t.profit_loss and t.profit_loss > 0]
         losing_trades = [t for t in closed_trades if t.profit_loss and t.profit_loss <= 0]
 
-        win_rate = len(winning_trades) / len(closed_trades) * 100 if closed_trades else 0
+        win_rate = self._calculate_win_rate()
 
         total_profit = sum(t.profit_loss for t in winning_trades) if winning_trades else 0
         total_loss = sum(t.profit_loss for t in losing_trades) if losing_trades else 0
@@ -677,8 +814,13 @@ class PaperTrader:
         logger.info(f"Average Loss: {avg_loss:.2f}")
         logger.info("==========================")
 
+        # Get current time in US Eastern Time
+        import pytz
+        eastern = pytz.timezone('US/Eastern')
+        now = datetime.now(eastern)
+
         # Save report to file
-        report_file = f"reports/paper_trading_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        report_file = f"reports/paper_trading_report_{now.strftime('%Y%m%d_%H%M%S')}.json"
         os.makedirs(os.path.dirname(report_file), exist_ok=True)
 
         report = {
@@ -782,8 +924,13 @@ class PaperTrader:
             plt.xlabel("Hour of Day")
             plt.ylabel("Symbol")
 
+            # Get current time in US Eastern Time
+            import pytz
+            eastern = pytz.timezone('US/Eastern')
+            now = datetime.now(eastern)
+
             # Save the heatmap
-            heatmap_file = f"reports/trade_heatmap_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+            heatmap_file = f"reports/trade_heatmap_{now.strftime('%Y%m%d_%H%M%S')}.png"
             plt.savefig(heatmap_file)
             plt.close()
 
