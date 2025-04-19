@@ -1,0 +1,44 @@
+# Risk Management Configuration
+
+# Initial balance
+initial_balance: 50.0
+
+# Maximum position size as percentage of balance (10%)
+max_position_pct: 0.1
+
+# Maximum total risk as percentage of balance (50%)
+max_total_risk_pct: 0.5
+
+# Maximum drawdown as percentage of peak balance (10%)
+max_drawdown_pct: 0.1
+
+# Maximum number of concurrent trades
+max_trades: 5
+
+# Stop loss settings
+stop_loss:
+  # Default stop loss percentage (2%)
+  default_pct: 0.02
+  
+  # Trailing stop loss settings
+  trailing:
+    # Enable trailing stop loss
+    enabled: true
+    # Activation threshold (1%)
+    activation_pct: 0.01
+    # Trailing distance (1%)
+    distance_pct: 0.01
+
+# Take profit settings
+take_profit:
+  # Default take profit percentage (3%)
+  default_pct: 0.03
+  
+  # Multiple take profit levels
+  levels:
+    # First take profit level (33% of position at 2% profit)
+    - { pct: 0.02, size_pct: 0.33 }
+    # Second take profit level (33% of position at 3% profit)
+    - { pct: 0.03, size_pct: 0.33 }
+    # Final take profit level (34% of position at 5% profit)
+    - { pct: 0.05, size_pct: 0.34 }

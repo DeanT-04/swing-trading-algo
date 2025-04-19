@@ -1,0 +1,45 @@
+2025-04-18 19:55:45,134 - swing_trading - INFO - Starting Swing Trading Algorithm
+2025-04-18 19:55:45,135 - swing_trading - INFO - Configuration loaded: Swing Trading Algorithm
+2025-04-18 19:55:45,135 - swing_trading - INFO - Data provider initialized: YahooFinanceProvider
+2025-04-18 19:55:45,136 - swing_trading - INFO - Retrieving data for F
+2025-04-18 19:55:45,517 - swing_trading - INFO - Retrieved 251 data points for F
+2025-04-18 19:55:45,517 - swing_trading - INFO - Retrieving data for NOK
+2025-04-18 19:55:45,638 - swing_trading - INFO - Retrieved 251 data points for NOK
+2025-04-18 19:55:45,640 - swing_trading - INFO - Retrieving data for PLTR
+2025-04-18 19:55:45,708 - swing_trading - INFO - Retrieved 251 data points for PLTR
+2025-04-18 19:55:45,708 - swing_trading - INFO - Retrieving data for LLOY.L
+2025-04-18 19:55:45,821 - swing_trading - INFO - Retrieved 254 data points for LLOY.L
+2025-04-18 19:55:45,821 - swing_trading - INFO - Retrieving data for RR.L
+2025-04-18 19:55:45,932 - swing_trading - INFO - Retrieved 253 data points for RR.L
+2025-04-18 19:55:45,932 - swing_trading - INFO - Retrieving data for EZJ.L
+2025-04-18 19:55:46,022 - swing_trading - INFO - Retrieved 254 data points for EZJ.L
+2025-04-18 19:55:46,023 - swing_trading - INFO - Retrieving data for BARC.L
+2025-04-18 19:55:46,149 - swing_trading - INFO - Retrieved 253 data points for BARC.L
+2025-04-18 19:55:46,151 - swing_trading - INFO - Retrieving data for BP.L
+2025-04-18 19:55:46,289 - swing_trading - INFO - Retrieved 253 data points for BP.L
+2025-04-18 19:55:46,290 - swing_trading - INFO - Strategy initialized: Basic Swing Strategy
+2025-04-18 19:55:46,290 - swing_trading - INFO - Simulator initialized with balance: 50.0 GBP
+2025-04-18 19:55:46,290 - swing_trading - INFO - Performance analyzer initialized
+2025-04-18 19:55:46,290 - swing_trading - INFO - Starting simulation
+2025-04-18 19:55:46,290 - swing_trading - INFO - Analyzing F
+2025-04-18 19:55:46,305 - swing_trading - INFO - No signals generated for F
+2025-04-18 19:55:46,305 - swing_trading - INFO - Analyzing NOK
+2025-04-18 19:55:46,319 - swing_trading - INFO - No signals generated for NOK
+2025-04-18 19:55:46,319 - swing_trading - INFO - Analyzing PLTR
+2025-04-18 19:55:46,335 - swing_trading - INFO - No signals generated for PLTR
+2025-04-18 19:55:46,336 - swing_trading - INFO - Analyzing LLOY.L
+2025-04-18 19:55:46,349 - swing_trading - INFO - No signals generated for LLOY.L
+2025-04-18 19:55:46,349 - swing_trading - INFO - Analyzing RR.L
+2025-04-18 19:55:46,364 - swing_trading - INFO - No signals generated for RR.L
+2025-04-18 19:55:46,365 - swing_trading - INFO - Analyzing EZJ.L
+2025-04-18 19:55:46,383 - swing_trading - INFO - No signals generated for EZJ.L
+2025-04-18 19:55:46,383 - swing_trading - INFO - Analyzing BARC.L
+2025-04-18 19:55:46,399 - swing_trading - INFO - No signals generated for BARC.L
+2025-04-18 19:55:46,400 - swing_trading - INFO - Analyzing BP.L
+2025-04-18 19:55:46,416 - swing_trading - INFO - No signals generated for BP.L
+2025-04-18 19:55:46,417 - swing_trading - INFO - Simulation completed
+2025-04-18 19:55:46,417 - swing_trading - INFO - Final balance: 50.0 GBP
+2025-04-18 19:55:46,417 - swing_trading - INFO - Total profit/loss: 0.0 GBP (0.0%)
+2025-04-18 19:55:46,419 - swing_trading - INFO - Total trades: 0
+2025-04-18 19:55:46,419 - swing_trading - INFO - Open positions: 0
+2025-04-18 19:55:46,419 - swing_trading - INFO - Swing Trading Algorithm completed

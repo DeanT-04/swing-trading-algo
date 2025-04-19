@@ -1,0 +1,20 @@
+2025-04-18 20:10:12,226 - swing_trading - INFO - Starting Backtest
+2025-04-18 20:10:12,228 - swing_trading - INFO - Data provider initialized: YahooFinanceProvider
+2025-04-18 20:10:12,229 - swing_trading - INFO - Retrieving data for F
+2025-04-18 20:10:12,564 - swing_trading - INFO - Retrieved 250 data points for F
+2025-04-18 20:10:12,564 - swing_trading - INFO - Retrieving data for NOK
+2025-04-18 20:10:12,669 - swing_trading - INFO - Retrieved 250 data points for NOK
+2025-04-18 20:10:12,669 - swing_trading - INFO - Retrieving data for PLTR
+2025-04-18 20:10:12,750 - swing_trading - INFO - Retrieved 250 data points for PLTR
+2025-04-18 20:10:12,751 - swing_trading - INFO - Retrieving data for LLOY.L
+2025-04-18 20:10:12,894 - swing_trading - INFO - Retrieved 251 data points for LLOY.L
+2025-04-18 20:10:12,894 - swing_trading - INFO - Retrieving data for RR.L
+2025-04-18 20:10:13,015 - swing_trading - INFO - Retrieved 251 data points for RR.L
+2025-04-18 20:10:13,015 - swing_trading - INFO - Retrieving data for EZJ.L
+2025-04-18 20:10:13,119 - swing_trading - INFO - Retrieved 251 data points for EZJ.L
+2025-04-18 20:10:13,119 - swing_trading - INFO - Retrieving data for BARC.L
+2025-04-18 20:10:13,256 - swing_trading - INFO - Retrieved 251 data points for BARC.L
+2025-04-18 20:10:13,256 - swing_trading - INFO - Retrieving data for BP.L
+2025-04-18 20:10:13,379 - swing_trading - INFO - Retrieved 251 data points for BP.L
+2025-04-18 20:10:13,379 - swing_trading - INFO - Strategy initialized: Basic Swing Strategy
+2025-04-18 20:10:13,379 - swing_trading - INFO - Running backtest from 2023-01-01 00:00:00 to 2024-01-01 00:00:00
