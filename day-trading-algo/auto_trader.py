@@ -685,29 +685,33 @@ def main():
 
     # Initialize UI
     if not args.no_ui:
-        # Create UI in a separate thread
-        ui = TradingUI()
-        ui_thread = threading.Thread(target=ui.run)
-        ui_thread.daemon = True
-        ui_thread.start()
+        try:
+            # Create UI
+            ui = TradingUI()
 
-        # Add initial log message
-        ui.add_message({
-            "type": "log",
-            "level": "INFO",
-            "message": "Day Trading Algorithm initialized"
-        })
+            # Add initial log message
+            ui.add_message({
+                "type": "log",
+                "level": "INFO",
+                "message": "Day Trading Algorithm initialized"
+            })
 
-        # Add initial statistics
-        ui.add_message({
-            "type": "statistics",
-            "statistics": {
-                "total_trades": 0,
-                "win_rate": 0.0,
-                "profit_loss": 0.0,
-                "balance": 50.0
-            }
-        })
+            # Add initial statistics
+            ui.add_message({
+                "type": "statistics",
+                "statistics": {
+                    "total_trades": 0,
+                    "win_rate": 0.0,
+                    "profit_loss": 0.0,
+                    "balance": 50.0
+                }
+            })
+
+            # Start UI in the main thread after everything else is set up
+            # We'll do this at the end of the script
+        except Exception as e:
+            logger.error(f"Error initializing UI: {e}")
+            ui = None
 
     if args.test_mode:
         logger.info("Running in test mode with simulated market hours")
@@ -740,16 +744,22 @@ def main():
                     })
 
     # Main loop
-    while running:
-        # Process UI commands
-        if ui:
-            process_ui_commands()
+    if ui and not args.no_ui:
+        # If we have a UI, run it in the main thread
+        # This will block until the UI is closed
+        ui.add_message({
+            "type": "status",
+            "status": "ONLINE"
+        })
+        ui.run()
+    else:
+        # No UI, run in console mode
+        while running:
+            # Run scheduled tasks
+            schedule.run_pending()
 
-        # Run scheduled tasks
-        schedule.run_pending()
-
-        # Sleep to avoid high CPU usage
-        time.sleep(0.1)
+            # Sleep to avoid high CPU usage
+            time.sleep(0.1)
 
 
 if __name__ == "__main__":
