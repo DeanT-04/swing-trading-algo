@@ -443,7 +443,7 @@ def start_trading(config: dict, symbols: list, timeframe: TimeFrame):
         })
 
     # Initialize data provider
-    data_provider = YahooFinanceProvider()
+    data_provider = YahooFinanceProvider(config)
 
     # Initialize strategy
     strategy = IntradayStrategy(config)
