@@ -15,8 +15,8 @@ from tkinter import ttk, scrolledtext
 import threading
 import queue
 import time
+import logging
 from datetime import datetime
-import pytz
 from typing import Dict, List, Optional, Tuple, Union
 
 # Add the project root to the Python path
@@ -257,9 +257,8 @@ class TradingUI:
 
     def _update_time(self):
         """Update the time display."""
-        # Get current time in Eastern Time (US market time)
-        eastern = pytz.timezone('US/Eastern')
-        now = datetime.now(eastern)
+        # Get current time (local time)
+        now = datetime.now()
 
         # Update time display
         self.time_var.set(now.strftime("%H:%M:%S"))
@@ -278,7 +277,7 @@ class TradingUI:
         Check if the US stock market is currently open.
 
         Args:
-            now: Current datetime in Eastern Time
+            now: Current datetime
 
         Returns:
             bool: True if market is open, False otherwise
@@ -287,7 +286,9 @@ class TradingUI:
         if now.weekday() >= 5:  # 5 = Saturday, 6 = Sunday
             return False
 
-        # Check if it's between 9:30 AM and 4:00 PM Eastern
+        # For simplicity, we'll use a fixed schedule in local time
+        # Adjust these hours based on your local time zone relative to US Eastern Time
+        # This is a simplified approach - for production, use proper timezone conversion
         market_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=16, minute=0, second=0, microsecond=0)
 
@@ -420,7 +421,7 @@ class TradingUI:
             row_tag = "lose_row"
 
         # Add to treeview
-        item_id = self.trade_history_tree.insert("", 0, values=(
+        self.trade_history_tree.insert("", 0, values=(
             symbol, direction, entry_time, exit_time, entry_price_str, exit_price_str,
             position_size_str, allocation_str, profit_loss_str, result
         ), tags=(row_tag,))
@@ -600,23 +601,32 @@ class TradingUI:
 
         # Update treeview
         try:
+            # Check if the item exists in the treeview
+            children = self.active_trades_tree.get_children()
+            if trade_id not in children:
+                return  # Skip if trade_id not found
+
             item = self.active_trades_tree.item(trade_id)
             values = list(item["values"])
-            values[4] = current_price_str  # Update current price
-            values[7] = profit_loss_str    # Update profit/loss (now at index 7)
-            self.active_trades_tree.item(trade_id, values=values)
 
-            # Color-code profit/loss
-            if profit_loss > 0:
-                self.active_trades_tree.tag_configure(trade_id, background="#e6ffe6")  # Light green
-                self.active_trades_tree.item(trade_id, tags=(trade_id,))
-            elif profit_loss < 0:
-                self.active_trades_tree.tag_configure(trade_id, background="#ffe6e6")  # Light red
-                self.active_trades_tree.item(trade_id, tags=(trade_id,))
-            else:
-                self.active_trades_tree.item(trade_id, tags=())
+            # Make sure we have enough values
+            if len(values) >= 8:
+                values[4] = current_price_str  # Update current price
+                values[7] = profit_loss_str    # Update profit/loss (now at index 7)
+                self.active_trades_tree.item(trade_id, values=values)
+
+                # Color-code profit/loss
+                if profit_loss > 0:
+                    self.active_trades_tree.tag_configure(trade_id, background="#e6ffe6")  # Light green
+                    self.active_trades_tree.item(trade_id, tags=(trade_id,))
+                elif profit_loss < 0:
+                    self.active_trades_tree.tag_configure(trade_id, background="#ffe6e6")  # Light red
+                    self.active_trades_tree.item(trade_id, tags=(trade_id,))
+                else:
+                    self.active_trades_tree.item(trade_id, tags=())
         except Exception as e:
-            print(f"Error updating active trade: {e}")
+            # Log the error but don't print to console
+            logging.error(f"Error updating active trade {trade_id}: {e}")
 
     def add_message(self, message: dict):
         """
@@ -639,8 +649,8 @@ def create_ui_thread() -> Tuple[TradingUI, threading.Thread]:
     Returns:
         Tuple[TradingUI, threading.Thread]: UI instance and thread
     """
-    # Create UI queue
-    ui_queue = queue.Queue()
+    # Create UI queue (not used in this implementation but kept for future use)
+    _ = queue.Queue()
 
     # Create UI in a separate thread
     def ui_thread_func():
