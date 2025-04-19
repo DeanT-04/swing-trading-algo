@@ -85,20 +85,82 @@ class PaperTrader:
         self.data_queue = queue.Queue()
         self.running = True
 
+        # Initialize callbacks
+        self.callbacks = {
+            "on_trade_opened": None,
+            "on_trade_closed": None,
+            "on_price_update": None
+        }
+
         logger.info(f"Initialized paper trading system with {self.initial_balance} {self.currency}")
 
-    def start(self):
+    def set_callbacks(self, callbacks: Dict):
+        """
+        Set callbacks for trade events.
+
+        Args:
+            callbacks: Dictionary of callback functions
+        """
+        for key, callback in callbacks.items():
+            if key in self.callbacks:
+                self.callbacks[key] = callback
+                logger.info(f"Set callback for {key}")
+            else:
+                logger.warning(f"Unknown callback type: {key}")
+
+    def run(self, symbols: List[str], timeframe: TimeFrame, strategy=None, data_provider=None,
+            duration_hours: float = 6.5, risk_manager=None):
+        """
+        Run the paper trading system with the specified parameters.
+
+        Args:
+            symbols: List of symbols to trade
+            timeframe: Timeframe to use
+            strategy: Strategy to use (optional, uses the one from constructor if not provided)
+            data_provider: Data provider to use (optional, uses the one from constructor if not provided)
+            duration_hours: Duration in hours to run the simulation
+            risk_manager: Risk manager to use (optional)
+        """
+        logger.info(f"Running paper trading for {len(symbols)} symbols with {timeframe} timeframe")
+
+        # Override strategy and data provider if provided
+        if strategy:
+            self.strategy = strategy
+        if data_provider:
+            self.data_provider = data_provider
+
+        # Store risk manager if provided
+        self.risk_manager = risk_manager
+
+        # Start the paper trading system
+        self.start(symbols, timeframe, duration_hours)
+
+    def stop(self):
+        """
+        Stop the paper trading system.
+        """
+        logger.info("Stopping paper trading system")
+        self.running = False
+
+    def start(self, symbols: List[str], timeframe: TimeFrame, duration_hours: float = 6.5):
         """Start the paper trading system."""
         logger.info("Starting paper trading system")
 
         # Load state if available
         self.load_state()
 
-        # Get symbols from config
-        symbols = self.config.get("data", {}).get("symbols", [])
+        # Use provided symbols or get from config
         if not symbols:
-            logger.error("No symbols configured for trading")
-            return False
+            symbols = self.config.get("data", {}).get("symbols", [])
+            if not symbols:
+                logger.error("No symbols configured for trading")
+                return False
+
+        # Store the timeframe
+        self.timeframe = timeframe
+
+        # Calculate end time based on duration
+        self.end_time = datetime.now() + timedelta(hours=duration_hours)
 
         # Start data fetcher thread
         fetcher_thread = threading.Thread(
@@ -107,6 +169,9 @@ class PaperTrader:
             daemon=True
         )
         fetcher_thread.start()
+
+        # Store the symbols for later use
+        self.symbols = symbols
 
         # Start processor thread
         processor_thread = threading.Thread(
@@ -170,6 +235,13 @@ class PaperTrader:
                         if stock and stock.data.get(timeframe):
                             # Put the stock data in the queue
                             self.data_queue.put(stock)
+
+                            # Call the on_price_update callback if set
+                            if self.callbacks["on_price_update"]:
+                                latest_data = stock.data.get(timeframe, [])
+                                if latest_data:
+                                    latest_price = latest_data[-1].close
+                                    self.callbacks["on_price_update"](symbol, latest_price)
                         else:
                             logger.warning(f"No data available for {symbol}")
                 else:
@@ -302,6 +374,21 @@ class PaperTrader:
                     # Increment the daily trade counter
                     self.current_day_trades += 1
 
+                    # Call the on_trade_opened callback if set
+                    if self.callbacks["on_trade_opened"]:
+                        trade_data = {
+                            "id": f"trade_{len(self.trades)}",
+                            "symbol": stock.symbol,
+                            "direction": signal["direction"].name,
+                            "entry_price": signal["entry_price"],
+                            "entry_time": now.strftime("%Y-%m-%d %H:%M:%S"),
+                            "size": position_size,
+                            "stop_loss": signal["stop_loss"],
+                            "take_profit": signal["take_profit"],
+                            "cost": position_size * signal["entry_price"]
+                        }
+                        self.callbacks["on_trade_opened"](trade_data)
+
                     logger.info(f"Opened {signal['direction'].name} position for {stock.symbol} at {signal['entry_price']}")
                     logger.info(f"Position size: {position_size}, Stop loss: {signal['stop_loss']}, Take profit: {signal['take_profit']}")
 
@@ -390,6 +477,21 @@ class PaperTrader:
         logger.info(f"Closed {position.direction.name} position for {position.symbol} at {exit_price}")
         logger.info(f"Profit/Loss: {profit_loss:.2f} ({reason})")
         logger.info(f"New account balance: {self.account_balance:.2f}")
+
+        # Call the on_trade_closed callback if set
+        if self.callbacks["on_trade_closed"]:
+            trade_data = {
+                "symbol": position.symbol,
+                "direction": position.direction.name,
+                "entry_price": position.entry_price,
+                "exit_price": exit_price,
+                "entry_time": position.entry_time.strftime("%Y-%m-%d %H:%M:%S") if position.entry_time else "",
+                "exit_time": position.exit_time.strftime("%Y-%m-%d %H:%M:%S") if position.exit_time else "",
+                "size": position.size,
+                "profit_loss": profit_loss,
+                "exit_reason": reason
+            }
+            self.callbacks["on_trade_closed"](trade_data)
 
         # Save trade details to CSV file
         self._log_trade_to_csv(position, exit_price, profit_loss, reason)
