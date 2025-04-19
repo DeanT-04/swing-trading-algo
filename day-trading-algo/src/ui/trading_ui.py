@@ -130,7 +130,7 @@ class TradingUI:
         notebook.add(active_trades_frame, text="Active Trades")
 
         # Create active trades treeview
-        columns = ("symbol", "direction", "entry_time", "entry_price", "current_price", "profit_loss")
+        columns = ("symbol", "direction", "entry_time", "entry_price", "current_price", "position_size", "allocation", "profit_loss")
         self.active_trades_tree = ttk.Treeview(active_trades_frame, columns=columns, show="headings")
 
         # Set column headings
@@ -139,6 +139,8 @@ class TradingUI:
         self.active_trades_tree.heading("entry_time", text="Entry Time")
         self.active_trades_tree.heading("entry_price", text="Entry Price")
         self.active_trades_tree.heading("current_price", text="Current Price")
+        self.active_trades_tree.heading("position_size", text="Size")
+        self.active_trades_tree.heading("allocation", text="Allocation")
         self.active_trades_tree.heading("profit_loss", text="Profit/Loss")
 
         # Set column widths
@@ -147,6 +149,8 @@ class TradingUI:
         self.active_trades_tree.column("entry_time", width=150)
         self.active_trades_tree.column("entry_price", width=100)
         self.active_trades_tree.column("current_price", width=100)
+        self.active_trades_tree.column("position_size", width=80)
+        self.active_trades_tree.column("allocation", width=80)
         self.active_trades_tree.column("profit_loss", width=100)
 
         # Add scrollbar
@@ -162,7 +166,7 @@ class TradingUI:
         notebook.add(trade_history_frame, text="Trade History")
 
         # Create trade history treeview
-        columns = ("symbol", "direction", "entry_time", "exit_time", "entry_price", "exit_price", "profit_loss", "result")
+        columns = ("symbol", "direction", "entry_time", "exit_time", "entry_price", "exit_price", "position_size", "allocation", "profit_loss", "result")
         self.trade_history_tree = ttk.Treeview(trade_history_frame, columns=columns, show="headings")
 
         # Set column headings
@@ -172,6 +176,8 @@ class TradingUI:
         self.trade_history_tree.heading("exit_time", text="Exit Time")
         self.trade_history_tree.heading("entry_price", text="Entry Price")
         self.trade_history_tree.heading("exit_price", text="Exit Price")
+        self.trade_history_tree.heading("position_size", text="Size")
+        self.trade_history_tree.heading("allocation", text="Allocation")
         self.trade_history_tree.heading("profit_loss", text="Profit/Loss")
         self.trade_history_tree.heading("result", text="Result")
 
@@ -182,6 +188,8 @@ class TradingUI:
         self.trade_history_tree.column("exit_time", width=150)
         self.trade_history_tree.column("entry_price", width=100)
         self.trade_history_tree.column("exit_price", width=100)
+        self.trade_history_tree.column("position_size", width=80)
+        self.trade_history_tree.column("allocation", width=80)
         self.trade_history_tree.column("profit_loss", width=100)
         self.trade_history_tree.column("result", width=80)
 
@@ -312,14 +320,27 @@ class TradingUI:
             message: Trade opened message dictionary
         """
         trade = message.get("trade", {})
+        stats = message.get("statistics", {})
 
         # Format values
         symbol = trade.get("symbol", "")
         direction = trade.get("direction", "")
         entry_time = trade.get("entry_time", "")
-        entry_price = f"${trade.get('entry_price', 0.0):.2f}"
-        current_price = f"${trade.get('current_price', 0.0):.2f}"
+        entry_price = trade.get('entry_price', 0.0)
+        current_price = trade.get('current_price', 0.0)
+        position_size = trade.get("size", 0.0)
+        cost = trade.get("cost", entry_price * position_size)
         profit_loss = trade.get("profit_loss", 0.0)
+
+        # Calculate allocation percentage
+        total_balance = stats.get("balance", 50.0) + cost  # Add cost back to get total balance
+        allocation_pct = (cost / total_balance * 100) if total_balance > 0 else 0.0
+
+        # Format display values
+        entry_price_str = f"${entry_price:.2f}"
+        current_price_str = f"${current_price:.2f}"
+        position_size_str = f"{position_size:.2f}" if position_size < 1 else f"{int(position_size)}"
+        allocation_str = f"{allocation_pct:.1f}%"
 
         # Format profit/loss with color
         if profit_loss > 0:
@@ -330,14 +351,15 @@ class TradingUI:
         # Add to treeview
         trade_id = trade.get("id", "")
         self.active_trades_tree.insert("", tk.END, iid=trade_id, values=(
-            symbol, direction, entry_time, entry_price, current_price, profit_loss_str
+            symbol, direction, entry_time, entry_price_str, current_price_str,
+            position_size_str, allocation_str, profit_loss_str
         ))
 
         # Add log entry
         self._add_log({
             "type": "log",
             "level": "INFO",
-            "message": f"Trade opened: {direction} {symbol} at {entry_price}"
+            "message": f"Trade opened: {direction} {symbol} at {entry_price_str}, Size: {position_size_str}, Allocation: {allocation_str}"
         })
 
     def _remove_active_trade(self, message: dict):
@@ -364,34 +386,54 @@ class TradingUI:
             message: Trade closed message dictionary
         """
         trade = message.get("trade", {})
+        stats = message.get("statistics", {})
 
         # Format values
         symbol = trade.get("symbol", "")
         direction = trade.get("direction", "")
         entry_time = trade.get("entry_time", "")
         exit_time = trade.get("exit_time", "")
-        entry_price = f"${trade.get('entry_price', 0.0):.2f}"
-        exit_price = f"${trade.get('exit_price', 0.0):.2f}"
+        entry_price = trade.get('entry_price', 0.0)
+        exit_price = trade.get('exit_price', 0.0)
+        position_size = trade.get("size", 0.0)
         profit_loss = trade.get("profit_loss", 0.0)
+
+        # Calculate cost and allocation percentage
+        cost = entry_price * position_size
+        total_balance = stats.get("balance", 50.0) + cost  # Add cost back to get total balance at time of trade
+        allocation_pct = (cost / total_balance * 100) if total_balance > 0 else 0.0
+
+        # Format display values
+        entry_price_str = f"${entry_price:.2f}"
+        exit_price_str = f"${exit_price:.2f}"
+        position_size_str = f"{position_size:.2f}" if position_size < 1 else f"{int(position_size)}"
+        allocation_str = f"{allocation_pct:.1f}%"
 
         # Determine result
         if profit_loss > 0:
             result = "WIN"
             profit_loss_str = f"+${profit_loss:.2f}"
+            row_tag = "win_row"
         else:
             result = "LOSE"
             profit_loss_str = f"-${abs(profit_loss):.2f}"
+            row_tag = "lose_row"
 
         # Add to treeview
-        self.trade_history_tree.insert("", 0, values=(
-            symbol, direction, entry_time, exit_time, entry_price, exit_price, profit_loss_str, result
-        ))
+        item_id = self.trade_history_tree.insert("", 0, values=(
+            symbol, direction, entry_time, exit_time, entry_price_str, exit_price_str,
+            position_size_str, allocation_str, profit_loss_str, result
+        ), tags=(row_tag,))
+
+        # Configure row colors
+        self.trade_history_tree.tag_configure("win_row", background="#e6ffe6")  # Light green
+        self.trade_history_tree.tag_configure("lose_row", background="#ffe6e6")  # Light red
 
         # Add log entry
         self._add_log({
             "type": "log",
             "level": "INFO",
-            "message": f"Trade closed: {direction} {symbol} at {exit_price}, {result}, P/L: {profit_loss_str}"
+            "message": f"Trade closed: {direction} {symbol} at {exit_price_str}, Size: {position_size_str}, {result}, P/L: {profit_loss_str}"
         })
 
     def _update_statistics(self, message: dict):
@@ -560,11 +602,21 @@ class TradingUI:
         try:
             item = self.active_trades_tree.item(trade_id)
             values = list(item["values"])
-            values[4] = current_price_str
-            values[5] = profit_loss_str
+            values[4] = current_price_str  # Update current price
+            values[7] = profit_loss_str    # Update profit/loss (now at index 7)
             self.active_trades_tree.item(trade_id, values=values)
-        except:
-            pass
+
+            # Color-code profit/loss
+            if profit_loss > 0:
+                self.active_trades_tree.tag_configure(trade_id, background="#e6ffe6")  # Light green
+                self.active_trades_tree.item(trade_id, tags=(trade_id,))
+            elif profit_loss < 0:
+                self.active_trades_tree.tag_configure(trade_id, background="#ffe6e6")  # Light red
+                self.active_trades_tree.item(trade_id, tags=(trade_id,))
+            else:
+                self.active_trades_tree.item(trade_id, tags=())
+        except Exception as e:
+            print(f"Error updating active trade: {e}")
 
     def add_message(self, message: dict):
         """

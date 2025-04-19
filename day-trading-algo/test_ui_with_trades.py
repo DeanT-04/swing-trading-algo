@@ -101,10 +101,23 @@ def simulate_trading(ui):
             # Update balance
             balance -= cost  # Deduct full cost from balance
 
+            # Create statistics
+            statistics = {
+                "total_trades": total_trades,
+                "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
+                "total_profit_loss": total_profit_loss,
+                "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+                "balance": balance,
+                "exposure_percent": (sum(t.get("cost", 0.0) for t in active_trades.values()) / balance * 100) if balance > 0 else 0.0,
+                "max_position_pct": 10.0,
+                "drawdown_percent": 0.0
+            }
+
             # Add trade to UI
             ui.add_message({
                 "type": "trade_opened",
-                "trade": trade
+                "trade": trade,
+                "statistics": statistics
             })
 
             # Update statistics
@@ -200,10 +213,23 @@ def simulate_trading(ui):
                 "size": position_size
             }
 
+            # Create statistics
+            statistics = {
+                "total_trades": total_trades,
+                "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
+                "total_profit_loss": total_profit_loss,
+                "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+                "balance": balance,
+                "exposure_percent": (sum(t.get("cost", 0.0) for t in active_trades.values()) / balance * 100) if balance > 0 else 0.0,
+                "max_position_pct": 10.0,
+                "drawdown_percent": 0.0
+            }
+
             # Add to UI
             ui.add_message({
                 "type": "trade_closed",
-                "trade": closed_trade
+                "trade": closed_trade,
+                "statistics": statistics
             })
 
             # Add to closed trades list

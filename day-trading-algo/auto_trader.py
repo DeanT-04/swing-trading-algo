@@ -218,11 +218,23 @@ def on_trade_opened(trade_data):
         "cost": cost
     }
 
+    # Get statistics for UI
+    statistics = {
+        "total_trades": total_trades,
+        "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
+        "total_profit_loss": total_profit_loss,
+        "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+        "balance": balance,
+        "exposure_percent": risk_metrics.get("exposure_pct", 0.0) * 100 if risk_metrics else 0.0,
+        "max_position_pct": risk_manager.max_position_pct * 100 if risk_manager else 10.0
+    }
+
     # Send trade to UI
     if ui:
         ui.add_message({
             "type": "trade_opened",
-            "trade": ui_trade
+            "trade": ui_trade,
+            "statistics": statistics
         })
 
         # Get risk metrics
@@ -311,11 +323,23 @@ def on_trade_closed(trade_data):
     # Add to closed trades list
     closed_trades.append(ui_trade)
 
+    # Get statistics for UI
+    statistics = {
+        "total_trades": total_trades,
+        "win_rate": (winning_trades / total_trades * 100) if total_trades > 0 else 0.0,
+        "total_profit_loss": total_profit_loss,
+        "active_profit_loss": sum(t.get("profit_loss", 0.0) for t in active_trades.values()),
+        "balance": balance,
+        "exposure_percent": risk_metrics.get("exposure_pct", 0.0) * 100 if risk_metrics else 0.0,
+        "drawdown_percent": risk_metrics.get("drawdown", 0.0) * 100 if risk_metrics else 0.0
+    }
+
     # Send trade to UI
     if ui:
         ui.add_message({
             "type": "trade_closed",
-            "trade": ui_trade
+            "trade": ui_trade,
+            "statistics": statistics
         })
 
         # Get risk metrics
